@@ -31,9 +31,9 @@ def remove_accents(string):
     string = re.sub(u"[¢çĉćĉCĈĆĈ]", 'c', string)
     string = re.sub(u"[Ž]", 'z', string)
     return string #.encode('ascii','ignore')
-def get_titles(titles,file)
+def get_titles(titles_file,file):
     with open(file, 'r',encoding="ISO-8859-1") as sample: 
-        titles = open('titles.txt','w')
+        titles = open(titles_file,'w')
         for line in sample:
             line=remove_accents(line)
             line = (" ").join(re.findall('\w+',line))
@@ -78,6 +78,17 @@ def get_words(file):
 def main():
     #get_articles("raw_0_10000",100)
     #get_words('sample.txt')
-    
+    cur=os.getcwd()
+    raw_dir=cur+"/raw"
+    f=[]
+    for (dirpath, dirnames, filenames) in os.walk(raw_dir):
+        f.extend(filenames)
+        break
+    f=sorted(f)
+    i=0
+    for file in f:
+        print(i/len(f))
+        i+=1
+        get_titles('titles.txt',raw_dir+"/"+file)
 if __name__=="__main__":
     main()
