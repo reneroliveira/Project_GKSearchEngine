@@ -7,11 +7,9 @@ import unicodedata as ud
 def get_articles(file,n): #pega uma amostra de n domumentos em "file"
     
     out=open('sample.txt',"w+")
-    with open(file,"r") as f:
-        lines=f.readlines()
+    with open(file,"r",encoding="ISO-8859-1") as f:
         counts=0
-        
-        for line in lines:
+        for line in f:
             if counts>=n:
                 break
             out.write(line)
@@ -33,35 +31,53 @@ def remove_accents(string):
     string = re.sub(u"[¢çĉćĉCĈĆĈ]", 'c', string)
     string = re.sub(u"[Ž]", 'z', string)
     return string #.encode('ascii','ignore')
-
-
-def get_words(file):
-    with open(file, 'r',encoding="latin-1") as sample: 
-        result = open('result_tests.txt', 'w+')
-        titles = open('titles.txt','w+')
-
+def get_titles(titles,file)
+    with open(file, 'r',encoding="ISO-8859-1") as sample: 
+        titles = open('titles.txt','w')
         for line in sample:
             line=remove_accents(line)
             line = (" ").join(re.findall('\w+',line))
-            aux=[]
             if re.match("doc",line) and len(line)>3:#linha que contem as informações
                 title=re.search("title\s?(\w+\s+)+nonfiltered",line).group()[6:-11].upper()
                 index=re.search("dbindex\s?\d+\s?",line).group()[8:]
-                x=title.lower().split()
-                for i in x:
-                    if i is not in
                 titles.write(index+","+title+"\n")
+        titles.close()
+def get_words(file):
+    with open(file, 'r',encoding="ISO-8859-1") as sample: 
+        result = open('result_tests.txt', 'r+')
+        titles = open('titles.txt','w')
+        aux=set([])
+        frequence={}
+        for line in sample:
+            line=remove_accents(line)
+            line = (" ").join(re.findall('\w+',line))
+            if re.match("doc",line) and len(line)>3:#linha que contem as informações
+                title=re.search("title\s?(\w+\s+)+nonfiltered",line).group()[6:-11].upper()
+                index=re.search("dbindex\s?\d+\s?",line).group()[8:]
+                titles.write(index+","+title+"\n")
+                for word in title.lower().split():
+                    if word not in aux:
+                        aux.update([word])
+                        frequence[word]=1
+                    else: 
+                        frequence[word]=frequence[word]+1
+                
             elif (re.match("doc",line) and len(line)<=3) or re.match("ENDOFARTICLE",line):
-                #result.write("\n")
-                pass
+                
+                aux.clear()
+                frequence={}
             else:
-                pass
+                for word in line.lower():
+                    if word not in aux:
+                        aux.update([word])
+                        frequence[word]=1
+                    else: 
+                        frequence[word]=frequence[word]+1
         result.close()
         titles.close()
 def main():
-    #get_articles("raw_0_10000",5)
-    get_words('sample.txt')
+    #get_articles("raw_0_10000",100)
+    #get_words('sample.txt')
     
 if __name__=="__main__":
-    #get_articles("raw_0_10000",5)
     main()
