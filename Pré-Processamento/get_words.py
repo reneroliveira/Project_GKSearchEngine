@@ -40,11 +40,16 @@ def main():
 
     for line in sample:
         if line[0:4]=="<doc":
-            #print(re.search('title={1}\"{2}',line))
-        if line[0:4]!="<doc" and line[0:6]!="</doc>" and line[0:12]!="ENDOFARTICLE":
-            words = re.findall('[a-zA-Z0-9]+',line)
-            line = (" ").join(words)
-            
+            title=re.search("title=\"(\w+\s)+\w+\"",line)
+            title=title.group()[7:-1]
+            id=re.search("id=\"(\d+)\"",line)
+            id=id.group()[4:-1]
+            print(id,title)
+        #if line[0:4]!="<doc" and line[0:6]!="</doc>" and line[0:12]!="ENDOFARTICLE":
+         #   words = re.findall('[a-zA-Z0-9]+',line)
+          #  line = (" ").join(words)
+    st=re.search("\"(\w+\s)+\w+\"", "title=\"rener oliveira da silva\" nonfiltered=\"1\" proc")
+    print(st.group()[3:-1])
     result.close()
     sample.close()
 if __name__=="__main__":
