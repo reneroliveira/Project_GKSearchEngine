@@ -21,7 +21,7 @@ def aChange(aOld, aNew):
             linha = (" ").join(l)
             arquivo2.write(linha+'\n')
         else:        
-            arquivo2.write(linha.lower())
+            arquivo2.write(linha.lower()+' ')
        
     arquivo2.close()
     arquivo.close()
