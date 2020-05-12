@@ -17,9 +17,17 @@ def get_articles(file,n): #pega uma amostra de n domumentos em "file"
                 print(line)
                 counts +=1
     out.close()
+accent_dict={
+    'à':'a','á':'a',
+    'â':'a',
+    'ã':'a',
+    'ä':'a',
+    'å':'a'
+    }
+
 def remove_accents(string):
-    if not(type(string)=="str"):
-       string.encode('utf-8')
+    #if not(type(string)=="str"):
+       #string.encode('utf-8')
     
     string = re.sub(u"[àáâãäå]", 'a', string)#ª
     string = re.sub(u"[ÁÀÂÃÄÅ]","A",string)
@@ -100,5 +108,6 @@ def main():
         print(i/len(f))
         i+=1
         get_titles('titles.txt',raw_dir+"/"+file)"""
+    print(remove_accents2("ráner"))
 if __name__=="__main__":
     main()
