@@ -7,7 +7,7 @@ def aChange(aOld, aNew):
     # abrir o arquivo em modo leitura
     arquivo2 = open(aNew, 'w')
     
-    for linha in arquivo.readlines():
+    for linha in arquivo:
         lista = re.findall('[a-zA-Z0-9]+',linha) # simplificando para
                                                  # a criação da árvore
         linha = (" ").join(lista)
