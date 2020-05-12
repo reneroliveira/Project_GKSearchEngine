@@ -3,11 +3,11 @@ import re
 import os
 
 def aChange(aOld, aNew):
-    arquivo = open(aOld, 'r') # arquivo original
-                              # abrir o arquivo em modo leitura
+    arquivo = open(aOld, 'r',encoding='utf-8', errors='ignore') # arquivo original
+    # abrir o arquivo em modo leitura
     arquivo2 = open(aNew, 'w')
     
-    for linha in arquivo:
+    for linha in arquivo.readlines():
         lista = re.findall('[a-zA-Z0-9]+',linha) # simplificando para
                                                  # a criação da árvore
         linha = (" ").join(lista)
@@ -31,7 +31,10 @@ if not os.path.exists('arch.en'):
     
 for i in range(164):
     aInt = i*10000
+    os.system('clear')
+    print("Limpando arquivo nº "+str(i+1)+"/164")
+
     aOne = 'raw.en/englishText_' + str(aInt) + '_' + str(aInt + 10000)
     aTwo = 'arch.en/archText_' + str(aInt) + '_' + str(aInt + 10000)
-    
+
     aChange(aOne, aTwo) # criando os arquivos auxiliares
