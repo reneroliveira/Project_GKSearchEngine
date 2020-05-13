@@ -1,5 +1,5 @@
 #!/usr/local/bin/python
-# coding: latin-1
+# coding: utf-8
 import os
 import re
 import unicodedata
@@ -25,9 +25,19 @@ accent_dict={
     'å':'a'
     }
 
+def strip_accents(text):
+
+    try:
+        text = unicode(text, 'utf-8')
+    except NameError: 
+        pass
+
+    text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode()
+
+    return str(text)
 def remove_accents(string):
-    #if not(type(string)=="str"):
-       #string.encode('utf-8')
+    if not(type(string)=="str"):
+       string.encode('utf-8')
     
     string = re.sub(u"[àáâãäå]", 'a', string)#ª
     string = re.sub(u"[ÁÀÂÃÄÅ]","A",string)
@@ -49,55 +59,79 @@ def remove_accents(string):
     return string #.encode('ascii','ignore')
 
 def get_titles(titles_file,file):
-    with open(file, 'r',encoding="ISO-8859-1") as sample: 
+    with open(file, 'r',encoding="ISO-8859-1",errors='ignore') as sample: 
         titles = open(titles_file,'w')
         for line in sample:
-            line=remove_accents(line)
+            line=strip_accents(line)
             line = (" ").join(re.findall('\w+',line))
-            if re.match("doc",line) and len(line)>3:#linha que contem as informações
+            if re.match("doc",line) and len(line)>3 and re.search("title\s?(\w+\s+)+nonfiltered",line):#linha que contem as informações
                 title=re.search("title\s?(\w+\s+)+nonfiltered",line).group()[6:-11].upper()
                 index=re.search("dbindex\s?\d+\s?",line).group()[8:]
                 titles.write(index+","+title+"\n")
         titles.close()
 def get_words(file):
     with open(file, 'r',encoding="ISO-8859-1") as sample: 
-        result = open('result_tests.txt', 'r+')
+        result = open('result_tests.txt', 'w+')
         titles = open('titles.txt','w')
         aux=set([])
         frequence={}
+        frequences=[]
         for line in sample:
-            line=remove_accents(line)
+            line=strip_accents(line)
             line = (" ").join(re.findall('\w+',line))
             if re.match("doc",line) and len(line)>3:#linha que contem as informações
-                title=re.search("title\s?(\w+\s+)+nonfiltered",line).group()[6:-11].upper()
+                title=re.search("title\s?(\w+\s+)+nonfiltered",line).group()[6:-12]
                 index=re.search("dbindex\s?\d+\s?",line).group()[8:]
                 titles.write(index+","+title+"\n")
                 for word in title.lower().split():
                     if word not in aux:
                         aux.update([word])
                         frequence[word]=1
-                    else: 
-                        frequence[word]=frequence[word]+1
-                
-            elif (re.match("doc",line) and len(line)<=3) or re.match("ENDOFARTICLE",line):
-                
-                aux.clear()
+                    else:
+                        if word in frequence: 
+                            frequence[word]=frequence[word]+1
+                        else:
+                            frequence[word]=1
+            elif (re.match("doc",line) and len(line)<=3) or re.match("ENDOFARTICLE",line):##fim do artigo
+                frequences.append([index,frequence])
                 frequence={}
             else:
-                for word in line.lower():
+                for word in line.lower().split():
                     if word not in aux:
                         aux.update([word])
                         frequence[word]=1
                     else: 
-                        frequence[word]=frequence[word]+1
+                        if word in frequence: 
+                            frequence[word]=frequence[word]+1
+                        else:
+                            frequence[word]=1
+        j=0
+        tot=len(aux)
+        print(str(tot)+" words")
+        #print(frequences[0])
+        for word in aux:
+            j+=1
+            if j%1000==0 or j==tot:
+                print("Palavra "+str(j)+"/"+str(tot))
+            result.write("$"+word+"\n")
+            i=1
+            for freq in frequences:
+                if word in freq[1]:
+                    i+=1
+                    result.write(str(freq[0])+","+str(freq[1][word])+" ")
+                if i%500==0:
+                    print(str(word)+ "ultrapassou 500")
+                    result.write("\n")
+            result.write("\n")
         result.close()
         titles.close()
 def main():
     #get_articles("raw_0_10000",100)
     #get_words('sample.txt')
-    """
+    if not os.path.exists('titles'):
+        os.mkdir('titles')
     cur=os.getcwd()
-    raw_dir=cur+"/raw"
+    raw_dir=cur+"/raw.en"
     f=[]
     for (dirpath, dirnames, filenames) in os.walk(raw_dir):
         f.extend(filenames)
@@ -106,8 +140,7 @@ def main():
     i=0
     for file in f:
         print(i/len(f))
+        get_titles(cur+"/titles/titles_"+str(i*10000)+"_"+str((i+1)*10000)+".txt",raw_dir+"/"+file)
         i+=1
-        get_titles('titles.txt',raw_dir+"/"+file)"""
-    print(remove_accents2("ráner"))
 if __name__=="__main__":
     main()
