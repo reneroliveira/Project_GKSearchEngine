@@ -7,7 +7,7 @@ import unicodedata
 def get_articles(file,n): #pega uma amostra de n domumentos em "file"
     
     out=open('sample.txt',"w+")
-    with open(file,"r",encoding="ISO-8859-1") as f:
+    with open(file,"r",encoding="utf-8") as f:
         counts=0
         for line in f:
             if counts>=n:
@@ -17,13 +17,6 @@ def get_articles(file,n): #pega uma amostra de n domumentos em "file"
                 print(line)
                 counts +=1
     out.close()
-accent_dict={
-    'à':'a','á':'a',
-    'â':'a',
-    'ã':'a',
-    'ä':'a',
-    'å':'a'
-    }
 
 def strip_accents(text):
 
@@ -36,8 +29,10 @@ def strip_accents(text):
 
     return str(text)
 def remove_accents(string):
-    if not(type(string)=="str"):
-       string.encode('utf-8')
+    try:
+        text = unicode(text, 'utf-8')
+    except NameError: 
+        pass
     
     string = re.sub(u"[àáâãäå]", 'a', string)#ª
     string = re.sub(u"[ÁÀÂÃÄÅ]","A",string)
@@ -59,7 +54,7 @@ def remove_accents(string):
     return string #.encode('ascii','ignore')
 
 def get_titles(titles_file,file):
-    with open(file, 'r',encoding="ISO-8859-1",errors='ignore') as sample: 
+    with open(file, 'r',encoding="utf-8",errors='ignore') as sample: 
         titles = open(titles_file,'w')
         for line in sample:
             line=strip_accents(line)
@@ -69,23 +64,18 @@ def get_titles(titles_file,file):
                 index=re.search("dbindex\s?\d+\s?",line).group()[8:]
                 titles.write(index+","+title+"\n")
         titles.close()
-def get_words(file):
-    with open(file, 'r',encoding="ISO-8859-1") as sample: 
-        result = open('result_tests.txt', 'w+')
-        titles = open('titles.txt','w')
-        aux=set([])
+def get_words(file,frequences):
+    with open(file, 'r',encoding="utf-8",errors='ignore') as sample: 
         frequence={}
-        frequences=[]
         for line in sample:
             line=strip_accents(line)
             line = (" ").join(re.findall('\w+',line))
-            if re.match("doc",line) and len(line)>3:#linha que contem as informações
+            if re.match("doc",line) and len(line)>3 and re.search("title\s?(\w+\s+)+nonfiltered",line):#linha que contem as informações
                 title=re.search("title\s?(\w+\s+)+nonfiltered",line).group()[6:-12]
                 index=re.search("dbindex\s?\d+\s?",line).group()[8:]
-                titles.write(index+","+title+"\n")
                 for word in title.lower().split():
-                    if word not in aux:
-                        aux.update([word])
+                    if word not in frequences.keys():
+                        frequences[word]={}#""
                         frequence[word]=1
                     else:
                         if word in frequence: 
@@ -93,41 +83,60 @@ def get_words(file):
                         else:
                             frequence[word]=1
             elif (re.match("doc",line) and len(line)<=3) or re.match("ENDOFARTICLE",line):##fim do artigo
-                frequences.append([index,frequence])
+                for word in frequence.keys():
+                    frequences[word][index]=frequence[word]#frequences[word]=frequences[word]+str(index)+","+str(frequence[word])+" "
+                del frequence
                 frequence={}
             else:
                 for word in line.lower().split():
-                    if word not in aux:
-                        aux.update([word])
+                    if word not in frequences.keys():
+                        frequences[word]={}#""
                         frequence[word]=1
                     else: 
                         if word in frequence: 
                             frequence[word]=frequence[word]+1
                         else:
                             frequence[word]=1
+def save_words(result_file,frequences):
+    with open(result_file,'w+',encoding='utf-8') as result:
         j=0
-        tot=len(aux)
+        tot=len(frequences.keys())
         print(str(tot)+" words")
         #print(frequences[0])
-        for word in aux:
+        for word in frequences.keys():
             j+=1
             if j%1000==0 or j==tot:
                 print("Palavra "+str(j)+"/"+str(tot))
             result.write("$"+word+"\n")
-            i=1
-            for freq in frequences:
-                if word in freq[1]:
-                    i+=1
-                    result.write(str(freq[0])+","+str(freq[1][word])+" ")
-                if i%500==0:
+            
+            for index in frequences[word].keys():
+                result.write(str(index)+","+str(frequences[word][index])+" ")
+                '''if i%500==0:
                     print(str(word)+ "ultrapassou 500")
-                    result.write("\n")
+                    result.write("\n")'''
             result.write("\n")
-        result.close()
-        titles.close()
-def main():
-    #get_articles("raw_0_10000",100)
-    #get_words('sample.txt')
+    del frequences
+
+def save_words2(result_file,frequences):
+    with open(result_file,'w+',encoding='utf-8') as result:
+        j=0
+        tot=len(frequences.keys())
+        print(str(tot)+" words")
+        #print(frequences[0])
+        for word in frequences.keys():
+            j+=1
+            if j%1000==0 or j==tot:
+                print("Palavra "+str(j)+"/"+str(tot))
+            result.write("$"+word+"\n")
+            
+            for index in frequences[word].keys():
+                result.write(frequences[word])
+                '''if i%500==0:
+                    print(str(word)+ "ultrapassou 500")
+                    result.write("\n")'''
+            result.write("\n")
+    del frequences
+def extract_titles():
     if not os.path.exists('titles'):
         os.mkdir('titles')
     cur=os.getcwd()
@@ -139,8 +148,33 @@ def main():
     f=sorted(f)
     i=0
     for file in f:
-        print(i/len(f))
-        get_titles(cur+"/titles/titles_"+str(i*10000)+"_"+str((i+1)*10000)+".txt",raw_dir+"/"+file)
+        os.system('clear')
+        print("Progresso -- "+str(round(i*100/len(f),2))+" %" )
+        get_titles(cur+"/titles/titles"+file[11:]+".txt",raw_dir+"/"+file)
         i+=1
+def main():
+    pass
+    
 if __name__=="__main__":
-    main()
+    #get_articles("raw_0_10000",100)
+    frequences={}
+    res='result_tests.txt'
+    res2='result_tests2.txt'
+    #get_words('sample.txt',frequences)
+    #print(frequences['henry'])
+    #save_words(res,frequences)
+    #extract_titles()
+    cur=os.getcwd()
+    raw_dir=cur+"/raw.en/"
+    f=[]
+    for (dirpath, dirnames, filenames) in os.walk(raw_dir):
+        f.extend(filenames)
+        break
+    f=sorted(f)
+    i=0
+    frequences={}
+    for file in f:
+        i+=1
+        print(i/len(f))
+        get_words(raw_dir+file,frequences)
+    save_words(res2,frequences)
