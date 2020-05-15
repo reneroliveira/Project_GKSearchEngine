@@ -97,45 +97,35 @@ def get_words(file,frequences):
                             frequence[word]=frequence[word]+1
                         else:
                             frequence[word]=1
-def save_words(result_file,frequences):
-    with open(result_file,'w+',encoding='utf-8') as result:
-        j=0
-        tot=len(frequences.keys())
-        print(str(tot)+" words")
-        #print(frequences[0])
-        for word in frequences.keys():
+def save_words(frequences):
+    max_words=400000
+    cur=os.getcwd()
+    if not os.path.exists('words'):
+        os.mkdir('words')
+    w_dir=cur+"/words"
+    
+    j=0
+    tot=len(frequences.keys())
+    print(str(tot)+" words")
+    #print(frequences[0])
+    if j%max_words==0: result_file = w_dir+"/words_"+str(j)
+    result = open(result_file,'w+',encoding='utf-8')
+    for word in frequences.keys():
             j+=1
             if j%1000==0 or j==tot:
                 print("Palavra "+str(j)+"/"+str(tot))
             result.write("$"+word+"\n")
-            
+            if j%max_words==0: 
+                result.close
+                result_file = w_dir+"/words_"+str(j)
+                result=open(result_file,'w+',encoding='utf-8'):
             for index in frequences[word].keys():
                 result.write(str(index)+","+str(frequences[word][index])+" ")
-                '''if i%500==0:
-                    print(str(word)+ "ultrapassou 500")
-                    result.write("\n")'''
             result.write("\n")
+    result.close()
     del frequences
 
-def save_words2(result_file,frequences):
-    with open(result_file,'w+',encoding='utf-8') as result:
-        j=0
-        tot=len(frequences.keys())
-        print(str(tot)+" words")
-        #print(frequences[0])
-        for word in frequences.keys():
-            j+=1
-            if j%1000==0 or j==tot:
-                print("Palavra "+str(j)+"/"+str(tot))
-            result.write("$"+word+"\n")
-            
-            for index in frequences[word].keys():
-                result.write(frequences[word])
-                '''if i%500==0:
-                    print(str(word)+ "ultrapassou 500")
-                    result.write("\n")'''
-            result.write("\n")
-    del frequences
+
 def extract_titles():
     if not os.path.exists('titles'):
         os.mkdir('titles')
@@ -152,8 +142,7 @@ def extract_titles():
         print("Progresso -- "+str(round(i*100/len(f),2))+" %" )
         get_titles(cur+"/titles/titles"+file[11:]+".txt",raw_dir+"/"+file)
         i+=1
-def main():
-    pass
+
     
 if __name__=="__main__":
     #get_articles("raw_0_10000",100)
