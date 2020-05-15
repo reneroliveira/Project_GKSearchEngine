@@ -142,10 +142,7 @@ def extract_titles():
         print("Progresso -- "+str(round(i*100/len(f),2))+" %" )
         get_titles(cur+"/titles/titles"+file[11:]+".txt",raw_dir+"/"+file)
         i+=1
-
-    
-if __name__=="__main__":
-    #get_articles("raw_0_10000",100)
+def extract_words():
     frequences={}
     res='result_tests.txt'
     res2='result_tests2.txt'
@@ -167,3 +164,12 @@ if __name__=="__main__":
         print(i/len(f))
         get_words(raw_dir+file,frequences)
     save_words(res2,frequences)
+    
+if __name__=="__main__":
+    get_articles(os.getcwd()+"/raw.en/englishText_0_10000",100)
+    #extrai 100 documentos e salva em sample.txt
+    frequences={}
+    res='result_tests.txt'
+    get_words('sample.txt',frequences)
+    extract_titles()
+    
