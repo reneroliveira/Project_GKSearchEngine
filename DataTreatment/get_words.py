@@ -118,7 +118,7 @@ def save_words(frequences):
             if j%max_words==0: 
                 result.close
                 result_file = w_dir+"/words_"+str(j)
-                result=open(result_file,'w+',encoding='utf-8'):
+                result=open(result_file,'w+',encoding='utf-8')
             for index in frequences[word].keys():
                 result.write(str(index)+","+str(frequences[word][index])+" ")
             result.write("\n")
@@ -144,12 +144,6 @@ def extract_titles():
         i+=1
 def extract_words():
     frequences={}
-    res='result_tests.txt'
-    res2='result_tests2.txt'
-    #get_words('sample.txt',frequences)
-    #print(frequences['henry'])
-    #save_words(res,frequences)
-    #extract_titles()
     cur=os.getcwd()
     raw_dir=cur+"/raw.en/"
     f=[]
@@ -163,13 +157,12 @@ def extract_words():
         i+=1
         print(i/len(f))
         get_words(raw_dir+file,frequences)
-    save_words(res2,frequences)
+    save_words(frequences)
     
 if __name__=="__main__":
     get_articles(os.getcwd()+"/raw.en/englishText_0_10000",100)
     #extrai 100 documentos e salva em sample.txt
     frequences={}
-    res='result_tests.txt'
     get_words('sample.txt',frequences)
     extract_titles()
     
