@@ -155,7 +155,7 @@ def extract_words():
     frequences={}
     for file in f:
         i+=1
-        print("{:.2f} % dos documentos lidos".format(i/len(f)))
+        print("{:.2f} % dos documentos lidos".format(i*100/len(f)))
         get_words(raw_dir+file,frequences)
     save_words(frequences)
     
