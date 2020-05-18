@@ -108,7 +108,7 @@ def save_words(frequences):
     tot=len(frequences.keys())
     print(str(tot)+" words")
     #print(frequences[0])
-    if j%max_words==0: result_file = w_dir+"/words_"+str(j)
+    if j%max_words==0: result_file = w_dir+"/words_"+str(j)+".txt"
     result = open(result_file,'w+',encoding='utf-8')
     for word in frequences.keys():
             j+=1
