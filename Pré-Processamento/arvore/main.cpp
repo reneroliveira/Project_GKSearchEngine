@@ -34,7 +34,7 @@ public:
     }
     ~Trie()
     {
-        cout << endl << "-> Build finished." << endl;
+        cout  << "-> Build finished." << endl;
     }
 
     void insert(string aWord)
@@ -43,30 +43,33 @@ public:
         // para serem identificados nos nós.
 
         char aWord_Char[aWord.length()];
-        int aIndex;
-        for (int i = 0; i < aWord.length(); i++)
-        {
-            if ((int)aWord_Char[i] < 90)
-            {
-                aIndex = (int)aWord_Char[i] - 48;
-            }
-            else
-            {
-                aIndex = (int)aWord_Char[i] - 87;
-                cout << aIndex << endl;
-            }
-        }
-
-        int aWord_Int[aWord.length()];
+        int aKey;
 
         strcpy(aWord_Char, aWord.c_str());
-
 
         cout << "-> Indexing word: " << aWord << "..." << endl;
         for (int i = 0; i < aWord.length(); i++)
         {
             cout << aWord_Char[i] << endl;
         }
+
+        cout << "-> The pointer is in keys: " << endl;
+        // Esta parte mosta as chaves dos caracteres. Isso serve para anexá-los nos nós-filhos.
+        // (nada mais que testes maneiros)
+        for (int i = 0; i < aWord.length(); i++)
+        {
+            if ((int)aWord_Char[i] < 90)
+            {
+                aKey = (int)aWord_Char[i] - 48;
+                cout << aKey << endl;
+            }
+            else
+            {
+                aKey = (int)aWord_Char[i] - 87;
+                cout << aKey << endl;
+            }
+        }
+        cout << endl;
     }
 };
 
@@ -75,14 +78,10 @@ int main()
     cout << "-----> Wellcome to the GK'SE, the Search Engine of the Great Knights! (build mode) <-----" << endl;
 
     Trie arvore;
-    arvore.insert("a");
-    arvore.insert("b");
-    arvore.insert("a");
-    arvore.insert("a");
+    arvore.insert("aoba");
+    arvore.insert("bacate");
+    arvore.insert("1948");
+    arvore.insert("autism");
 
-    /*char a = '1';
-    int ia = (int)a;
-    char b = (char)ia;
-    cout << ia << endl << b;*/
     return 0;
 }
