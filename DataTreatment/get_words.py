@@ -1,10 +1,32 @@
-#!/usr/local/bin/python
-# coding: utf-8
+# -*- coding: utf-8 -*-
+import time
 import os
 import re
 import unicodedata
 
-def get_articles(file,n): #pega uma amostra de n domumentos em "file"
+def merge(a,b,key):
+    result = []
+    while (a and b):
+        if a[0][key]>b[0][key]:
+            result.append(a[0])
+            a.pop(0)
+        else:
+            result.append(b[0])
+            b.pop(0)
+    for i in a:
+        result.append(i)
+    for j in b:
+        result.append(j)
+    return result
+
+def merge_sort(a,key):
+    if len(a)<=1:
+        return a 
+    else:
+        left = a[0:int(len(a)/2)]
+        right = a[int(len(a)/2):len(a)+1]
+    return merge(merge_sort(left,key),merge_sort(right,key),key)
+def get_articles(file,n): #pega uma amostra de n domumentos tipo raw em "file"
     
     out=open('sample.txt',"w+")
     with open(file,"r",encoding="utf-8") as f:
@@ -59,11 +81,15 @@ def get_titles(titles_file,file):
         for line in sample:
             line=strip_accents(line)
             line = (" ").join(re.findall('\w+',line))
-            if re.match("doc",line) and len(line)>3 and re.search("title\s?(\w+\s+)+nonfiltered",line):#linha que contem as informações
-                title=re.search("title\s?(\w+\s+)+nonfiltered",line).group()[6:-11].upper()
+            if re.match("doc id",line):#linha que contem as informações
+                if re.search("title\s?(\w+\s+)+nonfiltered",line):
+                    title=re.search("title\s?(\w+\s+)+nonfiltered",line).group()[6:-11].upper()
+                else:
+                    title=" "
                 index=re.search("dbindex\s?\d+\s?",line).group()[8:]
                 titles.write(index+","+title+"\n")
         titles.close()
+
 def get_words(file,frequences):
     with open(file, 'r',encoding="utf-8",errors='ignore') as sample: 
         frequence={}
@@ -97,8 +123,9 @@ def get_words(file,frequences):
                             frequence[word]=frequence[word]+1
                         else:
                             frequence[word]=1
+
 def save_words(frequences):
-    max_words=400000
+    max_words=50000
     cur=os.getcwd()
     if not os.path.exists('words'):
         os.mkdir('words')
@@ -107,20 +134,25 @@ def save_words(frequences):
     j=0
     tot=len(frequences.keys())
     print(str(tot)+" words")
+<<<<<<< HEAD
+    if j%max_words==0: result_file = w_dir+"/words_"+str(j)
+=======
     #print(frequences[0])
     if j%max_words==0: result_file = w_dir+"/words_"+str(j)+".txt"
+>>>>>>> ed23568e387523fca3d95ac85510c24d95cacfbf
     result = open(result_file,'w+',encoding='utf-8')
     for word in frequences.keys():
             j+=1
             if j%1000==0 or j==tot:
                 print("Palavra "+str(j)+"/"+str(tot))
             result.write("$"+word+"\n")
+            for index in frequences[word].keys():
+                result.write(str(index)+","+str(frequences[word][index])+" ")
             if j%max_words==0: 
                 result.close
                 result_file = w_dir+"/words_"+str(j)+".txt"
                 result=open(result_file,'w+',encoding='utf-8')
-            for index in frequences[word].keys():
-                result.write(str(index)+","+str(frequences[word][index])+" ")
+            
             result.write("\n")
     result.close()
     del frequences
@@ -158,12 +190,104 @@ def extract_words():
         print("{:.2f} % dos documentos lidos".format(i*100/len(f)))
         get_words(raw_dir+file,frequences)
     save_words(frequences)
+
+def sort_docs(dir,file):
+    file1=open(file,'r')
+    name=re.search('words\_(\d+)',file).group()
+    file2=open(dir+"sorted_"+name+".txt",'w+')
+    k=0
+    t0=time.time()
+    for line in file1:
+        k+=1
+        if k%10000==0:
+            print("--- Processing Lines {:.2f} %".format(k*100/100000))
+        
+        if re.match("\$",line):
+            file2.write(line)
+        else:
+            docs=[]
+            it=iter(line.split())
+            docs=[tuple([int(i) for i in x.split(',')]) for x in it]
+            docs=merge_sort(docs,1)
+            sorted_line=""
+            for d in docs:
+                sorted_line=sorted_line+str(d[0])+" "
+            file2.write(sorted_line+"\n")
+        t=time.time()-t0
+        
+    file1.close()
+    file2.close()
+    print(" ----- Tempo de linha = {:.2f} minutos".format(t/60))
+
+            
     
+def sort_articles():
+    cur=os.getcwd()
+    words_dir=cur+"/words/"
+    if not os.path.exists('sorted_words'):
+        os.mkdir('sorted_words')
+    sort_dir=cur+"/sorted_words/"
+    
+    f=[]
+    for (dirpath, dirnames, filenames) in os.walk(words_dir):
+        f.extend(filenames)
+        break
+    print(f)
+    i=0
+    t0=time.time()
+    for file in f:
+        i+=1
+        print("{:.2f} % concluído".format(i*100/len(f)))
+        sort_docs(sort_dir,words_dir+file)
+    t=time.time()-t0
+    print("Extração Concluída em {:.2f} minutos".format(t/60))
+def split_words():
+    cur=os.getcwd()
+    words_dir=cur+"/words/"
+    if not os.path.exists('words3'):
+        os.mkdir('words3')
+    new_dir=cur+"/words3/"
+    j=0
+    f=[]
+    for (dirpath, dirnames, filenames) in os.walk(words_dir):
+        f.extend(filenames)
+        break
+    res=open(new_dir+"words"+"_0.txt",'w+')
+    for file in f:
+        with open(words_dir+file,'r') as w:
+            for line in w:
+                res.write(line)
+                if j%100000==99999 and j!=0:
+                    res.close()
+                    res=open(new_dir+"words_"+str(int((j+1)/2))+".txt",'w+')
+                j=j+1
+def verify(path):
+    res=[]
+    f=[]
+    for (dirpath, dirnames, filenames) in os.walk(path):
+        f.extend(filenames)
+        break
+    for file in f:
+        j=0
+        with open(path+file,"r") as w:
+            for line in w:
+                j+=1
+                if j%2==1 and not (re.match("\$",line)):
+                    res.append([file,j,line[0:10]])
+    return res
 if __name__=="__main__":
-    #get_articles(os.getcwd()+"/raw.en/englishText_0_10000",100)
-    #extrai 100 documentos e salva em sample.txt
-    #frequences={}
-    #get_words('sample.txt',frequences)
-    #extract_titles()
-    extract_words()
     
+    #Linha abaixo extrai 100 documentos e salva em sample.txt
+    #get_articles(os.getcwd()+"/raw.en/englishText_0_10000",100)
+    
+
+    #Descomente abaixo se quiser extrair as palavras únicas por conta própria,
+    #recomendável ter 16GB de RAM, caso não tenha, temos os resultados já procesados disponíveis/*
+    #extract_words()
+    #sort_articles()
+
+    #Comando que extrai os títulos:
+    #extract_titles()
+    
+    
+
