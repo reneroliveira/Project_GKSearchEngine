@@ -18,13 +18,12 @@ struct Node
         this->aEnd = false;
         this->docs = {};
         // Esta parte separa os caracteres. Os de 0 a 9 são os números, e os de 10 a 35 são as letras.
-        aChild[0] = aChild[1] = aChild[2] = aChild[3] = aChild[4] = aChild[5] = aChild[6] = aChild[7] = aChild[8]
-        = aChild[9] = aChild[10] = aChild[11] = aChild[12] = aChild[13] = aChild[14] = aChild[15] = aChild[16] = aChild[17]
-        = aChild[18] = aChild[19] = aChild[20] = aChild[21] = aChild[22] = aChild[23] = aChild[24] = aChild[25] = aChild[26]
-        = aChild[27] = aChild[28] = aChild[29] = aChild[30] = aChild[31] = aChild[32] = aChild[33] = aChild[34] = aChild[35]
-        = nullptr;
+        for(int i=0;i<36;i++){
+            this->aChild[i]=nullptr;
+        }
+        
     }
-    
+
 };
 vector<int> convert(string aWord)
     {
