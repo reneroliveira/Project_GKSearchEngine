@@ -1,21 +1,29 @@
 #include <string.h>
 #include <vector>
 #include <iostream>
+#include <stdio.h>
 
 using namespace std;
 
 struct Node
 {
 
-    char aChar;
-    bool aEnd;
+    int aKey;// troquei a chave de char para int, pois faremos a conversão em índices primeiro;
     Node *aChild[36];
     vector<int> docs;
-
-    Node(char aLetter)
+    /*
+    Para checar se um nó é final de palavra, 
+    basta ver se existe algo nesse vetor usando docs.empty();
+    por isso removi o booleano end;
+    */
+    Node():aKey(-1),docs({}){
+        for(int i=0;i<36;i++){
+            this->aChild[i]=nullptr;
+        }
+    }
+    Node(int aIndex)
     {
-        this->aChar = aLetter;
-        this->aEnd = false;
+        this->aKey = aIndex;
         this->docs = {};
         // Esta parte separa os caracteres. Os de 0 a 9 são os números, e os de 10 a 35 são as letras.
         for(int i=0;i<36;i++){
@@ -27,32 +35,39 @@ struct Node
 };
 vector<int> convert(string aWord)
     {
-        vector<int> int_word;
+        vector<int> indexes;
         
         // A ideia inicia é transformar a palavra numa sequência de caracteres, para depois transformá-los em índices
         // para serem identificados nos nós.
         //o vetor acima conterá os índices
 
         int aKey;
-        cout << "-> Converting word: " << aWord <<endl;
+        //cout << "-> Converting word: " << aWord <<endl;
 
         
         // Esta parte mosta as chaves dos caracteres. Isso serve para anexá-los nos nós-filhos.
         // (nada mais que testes maneiros)
         for (char& aLetter:aWord)
-        {
-            if ((int)aLetter < 90)
-            {
-                aKey = (int)aLetter - 48;
-                int_word.push_back(aKey);
-            }
-            else
-            {
+        {//Função só converte corretamente, letras maiúsculas, minúsculas e números, vamos ver como tratar espaço e acentos
+            if((int)aLetter < 123 && (int)aLetter>96)
+            {//Letras minúsculas
                 aKey = (int)aLetter - 87;
-                int_word.push_back(aKey);
+                indexes.push_back(aKey);
+                //push_back é similar ao list.append do Python
+            }
+            else if ((int)aLetter < 58 && (int)aLetter>47)
+            {//números de 0 a 9
+                aKey = (int)aLetter - 48;
+                indexes.push_back(aKey);
+            }
+            
+            else if((int)aLetter < 91 && (int)aLetter>64)
+            {//Letras maiúsculas
+                aKey = (int)aLetter - 55;
+                indexes.push_back(aKey);
             }
         }
-    return int_word;
+    return indexes;
     }
 class Trie
 {
@@ -62,18 +77,34 @@ public:
     Trie():aRoot(nullptr)
     {
         cout << endl << "-> Starting trie build..." << endl;
+        //cout<< "Trie Root = "<< aRoot<<endl;
     }
     ~Trie()
     {
         cout  << "-> Build finished." << endl;
     }
-    void insert(vector<int> v){///Tive problemas aqui não consegui completar
-        for(int letter:v){
-            cout<<letter<<" ";
-        }
-        cout<<endl;
+    void insert(string aWord)
+    {   
+        Node**p =&aRoot;
+        cout<<endl<<"-> Inserting: "<<aWord<<endl;
+        insert(convert(aWord),p);
     }
+    bool find(string aWord){
+        cout<<endl<<"-> Finding: "<<aWord<<endl;
+        return find(convert(aWord));
+    }
+ /*OBS: essas funções publicas de insert e find, pegam uma string, convertem em vetor,
+ e chamam as funções privadas abaixo pra fazer o trabalho a partir desse vetor gerado*/
 private:
+    void insert(vector<int> indexes,Node**&p){
+        if(!(aRoot)){//Caso a raiz seja nula, Usa-se o contrutor Node()
+            aRoot=new Node();
+        }
+        for(int i:indexes){
+            (*p)->aChild[i]=new Node(i);
+            p=&((*p)->aChild[i]);
+        }
+    }
     bool find(vector<int> word) {
         Node **p = &aRoot;
         for(int i:word) {
@@ -85,6 +116,12 @@ private:
         }
         return true;
         }
+    void put_doc(int doc_id,Node*p)
+    {
+        /*Função recebe um inteiro e coloca no final da vetor,
+         de documentos do Nó cujo ponteiro p representa;*/
+        p->docs.push_back(doc_id);
+    }
 
         
     
@@ -102,11 +139,30 @@ int main()
 
     
     cout<<"-> Conversion Tests\n";
-    print_vector(convert("aoba"));
+    print_vector(convert("0123456789aoba"));
     print_vector(convert("bacate"));
     print_vector(convert("1948"));
-    print_vector(convert("autism"));
-    cout<<(char)87;
+    print_vector(convert("AUtIsm"));
+
+    cout<<"-> Trie Tests\n";
     Trie arvore;
-    arvore.insert(convert("rener"));
+    arvore.insert("Jorge");
+    arvore.insert("Kenner");
+    arvore.insert("Rener");
+    if(arvore.find("rener")){
+        cout<<"Palavra Encontrada :)"<<endl;
+    }else{
+        cout<<"Palavra Não Encontrada :("<<endl;
+    }
+    if(arvore.find("Poco")){
+        cout<<"Palavra Encontrada :)"<<endl;
+    }else{
+        cout<<"Palavra Não Encontrada :("<<endl;
+    }
+    
+    
+    
+    
+    
+    
 }
