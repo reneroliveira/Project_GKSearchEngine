@@ -31,6 +31,12 @@ struct Node
         }
         
     }
+    void put_doc(int doc_id)
+    {
+        /*Função recebe um inteiro e coloca no final da vetor,
+         de documentos do Nó cujo ponteiro p representa;*/
+        this->docs.push_back(doc_id);
+    }
 
 };
 vector<int> convert(string aWord)
@@ -74,21 +80,26 @@ class Trie
 protected:
     Node *aRoot;
 public:
-    Trie():aRoot(nullptr)
+    Trie()
     {
+        aRoot = new Node();//  Usa-se o contrutor Node() para criar a raiz;
         cout << endl << "-> Starting trie build..." << endl;
-        //cout<< "Trie Root = "<< aRoot<<endl;
+        
     }
+
     ~Trie()
-    {
+    {  
         cout  << "-> Build finished." << endl;
     }
-    void insert(string aWord)
+    Node* insert(string aWord)//retorna um ponteiro ao nó final
     {   
-        Node**p =&aRoot;
+        Node**p = &(aRoot);
         cout<<endl<<"-> Inserting: "<<aWord<<endl;
         insert(convert(aWord),p);
+        return *p;
     }
+    
+    
     bool find(string aWord){
         cout<<endl<<"-> Finding: "<<aWord<<endl;
         return find(convert(aWord));
@@ -97,11 +108,12 @@ public:
  e chamam as funções privadas abaixo pra fazer o trabalho a partir desse vetor gerado*/
 private:
     void insert(vector<int> indexes,Node**&p){
-        if(!(aRoot)){//Caso a raiz seja nula, Usa-se o contrutor Node()
-            aRoot=new Node();
-        }
         for(int i:indexes){
-            (*p)->aChild[i]=new Node(i);
+            if((*p)->aChild[i]==nullptr)
+            {//Caso o filho i não exista, cria-se um novo Nó;
+                (*p)->aChild[i]=new Node(i);
+            }
+            
             p=&((*p)->aChild[i]);
         }
     }
@@ -116,16 +128,7 @@ private:
         }
         return true;
         }
-    void put_doc(int doc_id,Node*p)
-    {
-        /*Função recebe um inteiro e coloca no final da vetor,
-         de documentos do Nó cujo ponteiro p representa;*/
-        p->docs.push_back(doc_id);
-    }
 
-        
-    
-    
 };
 void print_vector(vector<int> v){
     cout<<"-> ";
@@ -137,24 +140,27 @@ int main()
 {
     cout << "-----> Wellcome to the GK'SE, the Search Engine of the Great Knights! (build mode) <-----" << endl;
 
-    
-    cout<<"-> Conversion Tests\n";
-    print_vector(convert("0123456789aoba"));
-    print_vector(convert("bacate"));
-    print_vector(convert("1948"));
-    print_vector(convert("AUtIsm"));
-
     cout<<"-> Trie Tests\n";
     Trie arvore;
-    arvore.insert("Jorge");
-    arvore.insert("Kenner");
+    /*arvore.insert("0123456789aoba");
+    arvore.insert("bacate");
+    arvore.insert("1948");
+    arvore.insert("AUtIsm");
+    arvore.insert("abacate");
+    arvore.insert("abacaxi");*/
+    Node *p=arvore.insert("Jorge");
+    (*p).put_doc(7);
+    
     arvore.insert("Rener");
+    arvore.insert("Kenner");
+    
+
     if(arvore.find("rener")){
         cout<<"Palavra Encontrada :)"<<endl;
     }else{
         cout<<"Palavra Não Encontrada :("<<endl;
     }
-    if(arvore.find("Poco")){
+    if(arvore.find("abacatx")){
         cout<<"Palavra Encontrada :)"<<endl;
     }else{
         cout<<"Palavra Não Encontrada :("<<endl;
