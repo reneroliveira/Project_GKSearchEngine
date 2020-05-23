@@ -16,7 +16,8 @@ struct Node
     basta ver se existe algo nesse vetor usando docs.empty();
     por isso removi o booleano end;
     */
-    Node():aKey(-1),docs({}){
+
+    Node(){//
         for(int i=0;i<36;i++){
             this->aChild[i]=nullptr;
         }
