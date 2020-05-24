@@ -101,7 +101,7 @@ public:
     }
     
     
-    bool find(string aWord){
+    vector<int> find(string aWord){
         cout<<endl<<"-> Finding: "<<aWord<<endl;
         return find(convert(aWord));
     }
@@ -118,16 +118,16 @@ private:
             p=&((*p)->aChild[i]);
         }
     }
-    bool find(vector<int> word) {
+    vector<int> find(vector<int> word) {
         Node **p = &aRoot;
         for(int i:word) {
-            if (!((*p)->aChild[i])) {return false;
+            if (!((*p)->aChild[i])) {return {};
             }
             else{
             p = &((*p)->aChild[i]);
             }
         }
-        return true;
+        return (*p)->docs;
         }
 
 };
@@ -143,29 +143,30 @@ int main()
 
     cout<<"-> Trie Tests\n";
     Trie arvore;
-    /*arvore.insert("0123456789aoba");
-    arvore.insert("bacate");
-    arvore.insert("1948");
-    arvore.insert("AUtIsm");
-    arvore.insert("abacate");
-    arvore.insert("abacaxi");*/
     Node *p=arvore.insert("Jorge");
-    (*p).put_doc(7);
+    p->put_doc(7);
+    p->put_doc(47);
+    p->put_doc(78);
     
-    arvore.insert("Rener");
-    arvore.insert("Kenner");
     
 
-    if(arvore.find("rener")){
-        cout<<"Palavra Encontrada :)"<<endl;
+    vector <int> d=arvore.find("Jorge");
+    if(d.empty()){
+        cout<<"Palavra Não Encontrada"<<endl;
     }else{
-        cout<<"Palavra Não Encontrada :("<<endl;
+        cout<<"Resultados: ";
+        print_vector(d);
     }
-    if(arvore.find("abacatx")){
-        cout<<"Palavra Encontrada :)"<<endl;
+
+    vector <int> d2=arvore.find("Kenner");
+    if(d2.empty()){
+        cout<<"Palavra Não Encontrada"<<endl;
     }else{
-        cout<<"Palavra Não Encontrada :("<<endl;
+        cout<<"Resultados: ";
+        print_vector(d2);
     }
+
+    return 0;
     
     
     
