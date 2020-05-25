@@ -7,7 +7,7 @@ Observação: quando a pasta "raw.en" ou diretório "raw.en/" for citada, ela se re
 
 ## Constru??o da ?rvore (via dados tratados)
 
-1. Baixe [deste link](bit.ly) o arquivo "sorted_words.zip" e o descompacte na mesma pasta deste arquivo readme. 
+1. Baixe [deste link](https://bit.ly/36sinp3) o arquivo "sorted_words.zip" e o descompacte na mesma pasta deste arquivo readme. 
 
 2. Compile e execute o arquivo "trie_constructor.cpp". Pode usar o terminal, ou alguma IDE de sua prefer?ncia.
 
