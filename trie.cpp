@@ -89,13 +89,13 @@ public:
     }
 
     ~Trie()
-    {  
-        cout  << "-> Build finished." << endl;
+    {
+        //cout  << "-> Build finished." << endl;
     }
     Node* insert(string aWord)//retorna um ponteiro ao nó final
     {   
         Node**p = &(aRoot);
-        cout<<endl<<"-> Inserting: "<<aWord<<endl;
+        //cout<<endl<<"-> Inserting: "<<aWord<<endl;
         insert(convert(aWord),p);
         return *p;
     }
@@ -137,7 +137,9 @@ void print_vector(vector<int> v){
     cout<<x<<" ";}
     cout<<"\n\n";
 }
-int main()
+
+// comentado temporariamente pois importaremos em outro arquivo.
+/*int main()
 {
     cout << "-----> Wellcome to the GK'SE, the Search Engine of the Great Knights! (build mode) <-----" << endl;
 
@@ -173,4 +175,4 @@ int main()
     
     
     
-}
+}*/
