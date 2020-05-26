@@ -111,24 +111,50 @@ private:
             p=&((*p)->aChild[i]);
         }
     }
-    vector<int> find(vector<int> word) {
+    vector<int> find(vector<int> word)
+    {
         Node **p = &aRoot;
-        for(int i:word) {
+        for (int i:word)
+        {
             if (!((*p)->aChild[i])) {return {};
-            }
-            else{
+            } else {
             p = &((*p)->aChild[i]);
             }
         }
         return (*p)->docs;
-        }
-
+    }
 };
+
 string print_title(int x)
 {
-    string title;
-    // Aqui seria feita a função para retornar os títulos.
-    return std::to_string(x);
+    string title = "";
+    int number = x / 10000;
+    string name = "aNewTitles/titles_" + to_string(number*10000) + "_" + to_string((number+1)*10000) + ".txt";
+    string line;
+    ifstream file (name);
+    number = number*10000;
+    if (file.is_open())
+    {
+        while (getline(file, line))
+        {
+            if (x == number)
+            {
+                char str[line.length()+1];
+                strcpy(str, line.c_str());
+                char *token = strtok(str, ",");
+                while (token != NULL)
+                {
+                    token = strtok(NULL, ",");
+                    if (token == NULL) break;
+                    else title = title + token + ",";
+                }
+                title.pop_back();
+            }
+            number += 1;
+        }
+    }
+    file.close();
+    return title;
 }
 void print_vector(vector<int> v)
 {
