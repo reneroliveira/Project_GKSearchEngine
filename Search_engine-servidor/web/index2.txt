@@ -18,7 +18,6 @@
 
 
 
-
 <div id = "image"></div>
 
 <script src = "script.js"></script>

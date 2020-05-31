@@ -1,11 +1,18 @@
 #include "lib/server_http.hpp" //Chamando pacotes do Simple Web Server
 #include <sstream>
 #include <fstream>
+#include <string>
+#include <iostream>
+#include <bits/stdc++.h>
 
 using namespace std;
 using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 
 int main(){
+       
+        
+        
+
 //sabemos que it->second armazena nossa palavra do formulario e 
 // stream << "{\"res\":\"" <<  it->second << img_button << "\"}"; é responsavel por mostra ela
 	HttpServer server;
@@ -26,11 +33,17 @@ int main(){
 		stringstream stream;
 		stringstream res;
 		string name = "ken";
-		if(it->second == "sleep"){
-		for(int i = 0;i<3;i++){
-		res << "{\"res\":\"" << name[i] << "\n" << "\"}";
+		string textinho[3] = {"republica tchexa","brasil no comando","internaura maluco"};
+                string b = "</br>";
+                string c;
+                string aux;
+               for(int i = 0;i<3;i++){
+               aux = textinho[i]+b;
+                   c = c+aux;
+                };
+               if(it->second == "sleep"){
+		res << "{\"res\":\"" << c << "\"}";
 		
-		}
 		response->write(res);
 		}
 		/*stream << "{\"res\":\"" << "as respostas batem" << "\"}";
