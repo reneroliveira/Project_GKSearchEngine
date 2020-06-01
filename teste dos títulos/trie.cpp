@@ -156,6 +156,7 @@ string print_title(int x)
     file.close();
     return title;
 }
+
 void print_vector(vector<int> v)
 {
     for(int x:v)
@@ -163,3 +164,4 @@ void print_vector(vector<int> v)
         cout << " > " << print_title(x) << endl;
     }
 }
+

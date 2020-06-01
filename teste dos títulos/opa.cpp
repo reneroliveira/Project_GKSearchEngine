@@ -46,7 +46,7 @@ void insert_file(Trie T,const char* file){
 int main(){
     Trie GKSE;
     auto start = chrono::high_resolution_clock::now();
-    for(int i=0;i<=63;i++)
+    for(int i=0;i<=5;i++)
     {
         cout << "\r-> Inserting File " << i+1 << " of 64."; // Esse "\r" é um símbolo
         string prefix = "./sorted_words/sorted_words_";     // parecido com o "\n". Mas
@@ -85,7 +85,7 @@ int main(){
         else
         {
             cout << "-> Results:" << endl;
-            int counting = 0;
+            long unsigned int counting = 0;
             vector<int> res20;
 
             while (1) // Hehe, de novo eim.

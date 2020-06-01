@@ -4,15 +4,18 @@
 #include <string>
 #include <iostream>
 #include <bits/stdc++.h>
+#include <vector>
+#include "teste.cpp"
 
 using namespace std;
 using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 
-int main(){
-       
-        
-        
 
+
+
+int main(){
+   
+    
 //sabemos que it->second armazena nossa palavra do formulario e 
 // stream << "{\"res\":\"" <<  it->second << img_button << "\"}"; é responsavel por mostra ela
 	HttpServer server;
@@ -24,35 +27,25 @@ int main(){
 		auto query_fields = request->parse_query_string(); //Recebe o conteúdo de "entrada"
 		auto it = query_fields.find("text"); // Obtem o texto do conteudo
 		cout << it->second << endl;
+		
+		
+		
 		//A resposta para o servidor vai ser um JSON do formato
 		//{"res": "O seu projeto final vai ser incrível, [texto]!"}	
 		//JSON
 		// {"atributo1":"valor1",
 		//	"atributo2": {"sub-atributo": "valor2"}} 
 		string img_button = "</br> <input id = 'btn_img' type = 'button' onclick='print_img()' value ='Me clique!'> </br>";	
-		stringstream stream;
 		stringstream res;
-		string name = "ken";
-		string textinho[3] = {"republica tchexa","brasil no comando","internaura maluco"};
-                string b = "</br>";
-                string c;
-                string aux;
-               for(int i = 0;i<3;i++){
-               aux = textinho[i]+b;
-                   c = c+aux;
-                };
-               if(it->second == "sleep"){
-		res << "{\"res\":\"" << c << "\"}";
-		
+               vector<int> rest = pesquisa(it->second); 
+                if(it->second == "sleep"){
+		res << "{\"res\":\"" << "sim" << "\"}";
 		response->write(res);
 		}
-		/*stream << "{\"res\":\"" << "as respostas batem" << "\"}";
-		cout << stream.str();
-		response->write(stream);
-		*/
-		else{ stream << "{\"res\":\"" << "as respostas nao  batem" << "\"}";
-		cout << stream.str();
-		response->write(stream);}
+		
+		else{ res << "{\"res\":\"" << "as respostas nao  batem" << "\"}";
+		cout << res.str();
+		response->write(res);}
 	};
 	
 	
