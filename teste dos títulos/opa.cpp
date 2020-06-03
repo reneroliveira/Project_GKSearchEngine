@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <stdio.h>
 #include <string.h>
 #include <sstream>
 #include <chrono>
@@ -77,6 +76,7 @@ int main(){
         chrono::duration<double, milli> t_search = time2 - time1;
 
         cout << "-> " << res.size() << " results found in " << t_search.count()/1000 << " seconds." << endl;
+        //cout << "-> Google! Hire us immediately!!" << endl;
 
         if(res.empty())
         {
@@ -96,7 +96,7 @@ int main(){
                 } else {
                     res20=vector<int>(res.begin()+counting,res.end());
                 }
-                print_vector(res20);
+                print_vector(res20,counting);
                 cout << endl << "-> Do you want to open any result [n or result number]? ";
                 string answer;
                 cin >> answer;
