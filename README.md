@@ -5,9 +5,9 @@ Observação: quando a pasta "raw.en" ou diretório "raw.en/" for citada, ela se
   
 1. A pasta "DataTreatment" contém instruções para a preparação dos dados para a montagem da árvore.  
 
-> Dentro de **DataTreatment**, existe uma pasta mágica chamada **aTales**. Por lá têm tentativas hanradas de retornar textos.
+> Dentro de **DataTreatment**, existe uma pasta mágica chamada **aTales**. Por lá têm tentativas honradas de retornar textos.
 
-## Constrção da árvore (via dados tratados)
+## Construção da árvore (via dados tratados)
 
 1. Baixe [deste link](https://bit.ly/36sinp3) o arquivo "sorted_words.zip" e o descompacte na mesma pasta deste arquivo readme. 
 
