@@ -16,7 +16,7 @@ for i in range(164):
     aOld = "../raw.en/englishText_"+str(i*10000)+"_"+str(10000*(i+1))
     aNew = "aNames/aTitles_"+str(i*10000)+"_"+str(10000*(i+1))+".txt"
     
-    aFile = open(aOld, 'r')
+    aFile = open(aOld, 'r',encoding='iso-8859-1')
     aNotherFile = open(aNew, 'w', encoding='utf8')
     aCount = i*10000
     for aLine in aFile:
