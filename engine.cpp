@@ -5,9 +5,8 @@
 
 using namespace std;
 int main(){
-    int num_docs=10;//Número entre 0 e 63
-    Trie GKSE;
-    GKSE=build(num_docs);
+    int num_docs=63;//Número entre 0 e 63
+    Trie GKSE=build(num_docs);
 
 
     while(1)
@@ -52,8 +51,7 @@ int main(){
                 cin >> answer;
                 if (answer != "n")
                 {
-                    string content = aDocs(stoi(answer));
-                    cout<<content;
+                    cout<< aDocs(res[(stoi(answer)-1)]);
                 }
                 if (res.size() > counting + 20) // Esse if ocorre quando mais artigos
                 {                               // estão disponíveis.
