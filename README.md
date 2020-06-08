@@ -9,7 +9,7 @@ Observação: quando a pasta "raw.en" ou diretório "raw.en/" for citada, ela se
 
 ## Construção da árvore (via dados tratados)
 
-1. Baixe [deste link](https://bit.ly/36sinp3) o arquivo "sorted_words.zip" e o descompacte na mesma pasta deste arquivo readme. 
+1. Baixe [deste link](https://bit.ly/36sinp3) os arquivos "sorted_words.zip", "aNames.zip" e "aTexts.zip" e o descompacte na mesma pasta deste arquivo readme. 
 
 2. Compile e execute o arquivo "trie_constructor.cpp". Pode usar o terminal, ou alguma IDE de sua preferência.
 
