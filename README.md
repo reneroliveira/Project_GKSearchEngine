@@ -11,7 +11,7 @@ Observação: quando a pasta "raw.en" ou diretório "raw.en/" for citada, ela se
 
 1. Baixe [deste link](https://bit.ly/36sinp3) os arquivos "sorted_words.zip", "aNames.zip" e "aTexts.zip" e o descompacte na mesma pasta deste arquivo readme. 
 
-2. Compile e execute o arquivo "trie_constructor.cpp". Pode usar o terminal, ou alguma IDE de sua preferência.
+2. Compile e execute o arquivo "engine.cpp". Pode usar o terminal, ou alguma IDE de sua preferência.
 
 3. Aguarde a construção da árvore e digite sua busca (digite apenas uma palavra, e sem acentos ou caracteres não-alfanuméricos)
 
