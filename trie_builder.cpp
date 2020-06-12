@@ -26,10 +26,18 @@ void insert_file(Trie T,const char* file){
             {
                 stringstream ids;
                 ids<<linha;
-                string cur_id;
-                while(ids>>cur_id)
+                string data;//pode ser um Id ou frequencia, controlamos isso pelo bool
+                Pair P;
+                bool pos=false;
+                while(ids>>data)
                 {
-                    p->put_doc(stoi(cur_id));
+                    P.set(stoi(data),pos);
+                    if(pos){/*vai ser verdadeio quando pos=true(1), 
+                        ou seja, o dado for frequencia; Neste caso 
+                        insertaremos o Pair, na arvore;*/
+                        p->put_doc(P);
+                    }
+                    pos=!pos;
                 }
 
             }
@@ -48,7 +56,7 @@ Trie build(int num_docs){//num_docs pode variar de 0 a 64
     for(int i=0;i<=num_docs;i++)
     {
         cout << "\r-> Inserting File " << i+1 << " of 64."; // Esse "\r" é um símbolo
-        string prefix = "./sorted_words/sorted_words_";     // parecido com o "\n". Mas
+        string prefix = "./sorted_words2/sorted_words_";     // parecido com o "\n". Mas
         string number = to_string(i*50000);                 // ao invés dele criar uma
         string sufix = ".txt";                              // linha, ele reseta a
         string a = prefix + number + sufix;                 // linha, meio que

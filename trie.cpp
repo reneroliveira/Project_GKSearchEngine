@@ -1,35 +1,32 @@
 #include <string.h>
 #include <vector>
 #include <iostream>
-#include <stdio.h>
 #include <fstream>
+#include <sstream>
+#include <chrono>
+#include <boost/sort/spreadsort/spreadsort.hpp>
+#include "Pair.cpp"
 
 using namespace std;
 
 struct Node
 {
 
-    //int aKey; Deixei sem a chave para tentar reduzir memória ocupada.
     Node *aChild[36];
-    vector<int> docs;
-    /*
-    Para checar se um nó é final de palavra,
-    basta ver se existe algo nesse vetor usando docs.empty();
-    por isso removi o booleano end;
-    */
+    vector<Pair> docs;
+   /* agora o vetor docs é do tipo (id,freq)*/
 
-    Node(){//
+    Node(){
         this->docs ={};
         for(int i=0;i<36;i++){
             this->aChild[i]=nullptr;
         }
     }
 
-    void put_doc(int doc_id)
+    void put_doc(Pair P)
     {
-        /*Função recebe um inteiro e coloca no final da vetor,
-         de documentos do Nó cujo ponteiro p representa;*/
-        this->docs.push_back(doc_id);
+        /*Função recebe um par (id,freq) e coloca no final da vetor*/
+        this->docs.push_back(P);
     }
 
 };
@@ -87,12 +84,12 @@ public:
         return *p;
     }
 
-    vector<int> find(string aWord){
+    vector<Pair> find(string aWord){
         cout << endl << "-> Finding: " << aWord << "..." << endl;
         return find(convert(aWord));
     }
     void suggest(string query){
-        cout<<"-> Sorry. Word not found.  ;-;";
+        cout<<"-> Sorry. We can't do suggestions yet  ;-;";
     }
  /*OBS: essas funções publicas de insert e find, pegam uma string, convertem em vetor,
  e chamam as funções privadas abaixo pra fazer o trabalho a partir desse vetor gerado*/
@@ -107,7 +104,7 @@ private:
             p=&((*p)->aChild[i]);
         }
     }
-    vector<int> find(vector<int> word)
+    vector<Pair> find(vector<int> word)
     {
         Node **p = &aRoot;
         for (int i:word)
@@ -160,21 +157,22 @@ string print_title(int x)
     file.close();
     return title;
 }
-void print_vector(vector<int> v,int couting)
+void print_vector(vector<Pair> v,int couting)
 {   
     int i = couting+1;
-    for(int x:v)
+    for(int j=0;j<v.size();j++)
     {
-        cout << " > ["<< i <<"] " << print_title(x) << endl;
+        cout << " > ["<< i <<"] " << print_title(v[j][0]) << endl;
         i+=1;
     }
 }
 std::string aDocs (int aIndex) // Função para procurar o texto referente ao dbindex aIndex.
 {
     int aNumber = aIndex/10000; aNumber *= 10000;
-    std::ifstream aFile ("aTexts/aDocs_" + std::to_string(aNumber) + "_" + std::to_string(aNumber+10000));
+    std::ifstream aFile ("aTexts/aDocs_" + std::to_string(aNumber) + "_" + std::to_string(aNumber+10000)+".txt");
     std::string aLine;
     std::string aText ("");
+    std::cout<<"aTexts/aDocs_" + std::to_string(aNumber) + "_" + std::to_string(aNumber+10000)<<endl;
     if (aFile.is_open())
     {
         bool aIsText (false); // Este aIsText indica se é o texto que procuramos.
@@ -203,4 +201,46 @@ std::string aDocs (int aIndex) // Função para procurar o texto referente ao db
     return aText;
 }
 
+vector<Pair> inter2sorted(vector<Pair>v1,vector<Pair>v2){
+    
+    int j=0;
+    int i=0;
+    vector<Pair>res;
+    if(v1.empty() || v2.empty()){
+        res={};
+        return res;
+    }
+    while(i < v1.size()){
+        if(v1[i][0]<v2[j][0]) i++;
+        else if(v1[i][0]>v2[j][0])++j;
+        else{
+            res.push_back(v1[i]);
+            ++j;
+            }
+    }
+    return res;
+}
 
+
+vector<Pair> intercept(vector<vector<Pair>> all_words){
+    vector<Pair>res;
+    int L = all_words.size();
+    if(L==1){
+        return all_words[0];
+    }
+    else{
+    //cout<<"-> Intercepting ..."<<endl;
+    vector<Pair> aux = inter2sorted(all_words[0],all_words[1]);
+    
+    for(int i = 2;i<L;i++){
+        if(aux.empty()){
+            res={};
+            return res;
+        }
+        res=inter2sorted(aux,all_words[i]);
+        aux=res;
+    }
+    if(L==2) res=aux;
+    return res;
+    }
+}
