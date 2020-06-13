@@ -9,9 +9,10 @@ Observação: quando a pasta "raw.en" ou diretório "raw.en/" for citada, ela se
 
 ## Construção da árvore (via dados tratados)
 
-1. Baixe [deste link](https://bit.ly/36sinp3) os arquivos "sorted_words.zip", "aNames.zip" e "aTexts.zip" e o descompacte na mesma pasta deste arquivo readme. 
-
+1. Baixe [deste link](https://bit.ly/36sinp3) os arquivos <s>"sorted_words.zip"</s>**"sorted_words2.zip"**, "aNames.zip" e "aTexts.zip" e o descompacte na mesma pasta deste arquivo readme. 
+> Obs: Ainda estou fazendo o retratamento dessa pasta sorted_words2.zip, Coloquei provisoramente apenas 3 conjuntos de dados nesse zip, o que gera um árvore incompleta. Em 24h libero o conjunto todo!.
 2. Compile e execute o arquivo "engine.cpp". Pode usar o terminal, ou alguma IDE de sua preferência.
+> Ainda está com alguns bugs quando o usuário pede pra abrir um documento, pretendo corrigir o mais rápido possível.
 
 3. Aguarde a construção da árvore e digite sua busca (digite apenas uma palavra, e sem acentos ou caracteres não-alfanuméricos)
 
