@@ -34,8 +34,9 @@ public:
         uma coisa de cada vez na deserialização*/
        
     }
-    bool operator<(const Pair &p2){
-        if(core[1]<p2.core[1]) return true;
+    bool operator<(const Pair &p2){//operador usado por std::sort;
+        if(core[1]>p2.core[1]) return true;
+        //Invertemos o sinal pra > pois queremos mais frequentes primeiro
         else return false;
     }
     int operator[](int i){

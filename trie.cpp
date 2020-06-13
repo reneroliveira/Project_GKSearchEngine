@@ -4,7 +4,8 @@
 #include <fstream>
 #include <sstream>
 #include <chrono>
-#include <boost/sort/spreadsort/spreadsort.hpp>
+#include <exception>
+#include <thread>
 #include "Pair.cpp"
 
 using namespace std;
@@ -66,6 +67,25 @@ vector<int> convert(string aWord)
         }
     return indexes;
     }
+vector<Pair> inter2sorted(vector<Pair>v1,vector<Pair>v2){
+    
+    int j=0;
+    int i=0;
+    vector<Pair>res;
+    if(v1.empty() || v2.empty()){
+        res={};
+        return res;
+    }
+    while(i < v1.size()){
+        if(v1[i][0]<v2[j][0]) i++;
+        else if(v1[i][0]>v2[j][0])++j;
+        else{
+            res.push_back(v1[i]);
+            ++j;
+            }
+    }
+    return res;
+}
 class Trie
 {
 protected:
@@ -84,12 +104,20 @@ public:
         return *p;
     }
 
-    vector<Pair> find(string aWord){
-        cout << endl << "-> Finding: " << aWord << "..." << endl;
-        return find(convert(aWord));
+    vector<Pair> find(string aPhrase){
+        cout << endl << "-> Finding: " << aPhrase << "..." << endl;
+        stringstream split_query;
+        split_query<<aPhrase;
+        string word;
+        split_query>>word;
+        vector<Pair> res = this->find(convert(word));
+        while(split_query>>word){
+            res=inter2sorted(res,this->find(convert(word)));
+        }
+        return res;
     }
     void suggest(string query){
-        cout<<"-> Sorry. We can't do suggestions yet  ;-;";
+        cout<<"-> Sorry. We can't suggest anything yet  ;-;";
     }
  /*OBS: essas funções publicas de insert e find, pegam uma string, convertem em vetor,
  e chamam as funções privadas abaixo pra fazer o trabalho a partir desse vetor gerado*/
@@ -200,47 +228,30 @@ std::string aDocs (int aIndex) // Função para procurar o texto referente ao db
     else return " > The text couldn't be openned.";
     return aText;
 }
+class OutOfRange : public exception
+{
+protected:
+    const char* msg = "Ooops! Try a lower number!\n\n";
 
-vector<Pair> inter2sorted(vector<Pair>v1,vector<Pair>v2){
+public:
     
-    int j=0;
-    int i=0;
-    vector<Pair>res;
-    if(v1.empty() || v2.empty()){
-        res={};
-        return res;
+    const char *what() const throw()
+    {
+        return msg;
     }
-    while(i < v1.size()){
-        if(v1[i][0]<v2[j][0]) i++;
-        else if(v1[i][0]>v2[j][0])++j;
-        else{
-            res.push_back(v1[i]);
-            ++j;
-            }
+};
+
+string ShowText(string aInner,vector<Pair> res,int counting){
+    int aIndex = std::stoi(aInner);
+    if (aIndex > counting+20)
+    {
+        throw OutOfRange();
     }
-    return res;
+    return aDocs(res[aIndex-1][0]);
+          
 }
 
 
-vector<Pair> intercept(vector<vector<Pair>> all_words){
-    vector<Pair>res;
-    int L = all_words.size();
-    if(L==1){
-        return all_words[0];
-    }
-    else{
-    //cout<<"-> Intercepting ..."<<endl;
-    vector<Pair> aux = inter2sorted(all_words[0],all_words[1]);
-    
-    for(int i = 2;i<L;i++){
-        if(aux.empty()){
-            res={};
-            return res;
-        }
-        res=inter2sorted(aux,all_words[i]);
-        aux=res;
-    }
-    if(L==2) res=aux;
-    return res;
-    }
-}
+
+
+
