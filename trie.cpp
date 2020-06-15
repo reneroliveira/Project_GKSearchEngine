@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <chrono>
+#include <algorithm>
 #include <exception>
 #include <thread>
 #include "Pair.cpp"
@@ -31,22 +32,21 @@ struct Node
     }
 
 };
+char index2char(int index)//converte indice para charactere alfanumérico
+    {
+        if (index>=0 &&index<=9){//algarismos 0-9
+            return (char)(index+48);
+        }
+        else if(index>=10&&index<=35){//Letras minusculas a-z
+            return (char)(index+87);
+        }
+    }
 vector<int> convert(string aWord)
     {
         vector<int> indexes;
-
-        // A ideia inicia é transformar a palavra numa sequência de caracteres, para depois transformá-los em índices
-        // para serem identificados nos nós.
-        //o vetor acima conterá os índices
-
         int aKey;
-        //cout << "-> Converting word: " << aWord <<endl;
-
-
-        // Esta parte mosta as chaves dos caracteres. Isso serve para anexá-los nos nós-filhos.
-        // (nada mais que testes maneiros)
         for (char& aLetter:aWord)
-        {//Função só converte corretamente, letras maiúsculas, minúsculas e números, vamos ver como tratar espaço e acentos
+        {//Função só converte corretamente, letras maiúsculas, minúsculas e números, vamos ver como tratar acentos e outros chars
             if((int)aLetter < 123 && (int)aLetter>96)
             {//Letras minúsculas
                 aKey = (int)aLetter - 87;
@@ -76,12 +76,13 @@ vector<Pair> inter2sorted(vector<Pair>v1,vector<Pair>v2){
         res={};
         return res;
     }
-    while(i < v1.size()){
+    while(i < v1.size() && j<v2.size()){
         if(v1[i][0]<v2[j][0]) i++;
-        else if(v1[i][0]>v2[j][0])++j;
+        else if(v1[i][0]>v2[j][0])j++;
         else{
             res.push_back(v1[i]);
-            ++j;
+            j++;
+            i++;
             }
     }
     return res;
@@ -116,8 +117,33 @@ public:
         }
         return res;
     }
-    void suggest(string query){
-        cout<<"-> Sorry. We can't suggest anything yet  ;-;";
+
+    vector<string> suggest(string word,int maxCost,int maxlen){
+    
+        vector<string> results;
+        int sz = word.size();
+        string nodeword = "";
+        vector<int> current_row(sz + 1);
+        int cut=0;
+        // Naive DP initialization
+        for (int i = 0; i < sz; ++i) current_row[i] = i;
+        current_row[sz] = sz;
+        
+        for(int i = 0;i<36;i++){
+            if(aRoot->aChild[i]){
+                nodeword+=index2char(i);
+                recurse_levenshtein(aRoot->aChild[i], index2char(i), current_row, word, maxCost,nodeword,results, maxlen, cut);
+                cut+=1;
+
+            }
+            int s = nodeword.size();
+            int c=cut;
+            for(int k=0;k<c;k++) {
+                nodeword.pop_back();
+                cut--;
+                }
+        }
+        return results;
     }
  /*OBS: essas funções publicas de insert e find, pegam uma string, convertem em vetor,
  e chamam as funções privadas abaixo pra fazer o trabalho a partir desse vetor gerado*/
@@ -144,6 +170,75 @@ private:
         }
         return (*p)->docs;
     }
+    void recurse_levenshtein(Node*& pNode, char ch, vector<int> last_row, const string& word,int maxCost,string& nodeword,vector<string>&results,int maxlen,int&cut)
+    {
+        
+    int sz = last_row.size();
+    vector<int> current_row(sz);
+    current_row[0] = last_row[0] + 1;
+    // Calcula o custo de inserir, deletar ou substituir uma letra;
+    int insert_or_del, replace;
+    for (int i = 1; i < sz; ++i) {
+        insert_or_del = min(current_row[i-1] + 1, last_row[i] + 1);
+        replace = (word[i-1] == ch) ? last_row[i-1] : (last_row[i-1] + 1);
+
+        current_row[i] = min(insert_or_del, replace);
+    }
+     
+    if (current_row[sz-1] <= maxCost && !(pNode->docs.empty()))
+    {
+        results.push_back(nodeword);
+    }
+    
+    if (results.size()>=maxlen)
+    {
+        return;
+    }
+    // Se há algum elemento na current_row menor do que nosso maxCost,
+    // fazemos a recursão pelos filhos do pNode atual, pois pode haver algum
+    // sufixo cuja distancia de levenshtein seja menor
+    if (*min_element(current_row.begin(), current_row.end()) <= maxCost) {
+        for (int i = 0;i<36;++i) {
+            
+            
+            if(pNode->aChild[i]){
+                ch=index2char(i);
+                nodeword+=ch;
+                recurse_levenshtein(pNode->aChild[i],ch, current_row, word,maxCost,nodeword,results,maxlen,cut);
+                cut+=1;
+                
+            }
+                int s = nodeword.size();
+                int c=cut;
+                for(int k=0;k<c;k++) {
+                nodeword.pop_back();
+                cut--;
+                }
+            
+            
+            
+            /*int s = nodeword.size();
+            int c=cut;
+            //cout<<cut<<" ";
+            for(int k=0;k<c;k++) {nodeword.pop_back(); cut-=1;}
+            
+            if(!(nodeword=="")){
+                cout<<"print --"<<nodeword<<endl;
+                if(nodeword.size()==1) {nodeword="";}
+
+                else{nodeword.pop_back();}
+            }*/
+            
+            //nodeword=nodeword.substr(cut2);
+            //cut=0;
+            //cut-=1;
+            //cut=s-cut;
+            //cut=nodeword.size()-cut-1;
+        }
+        
+    }
+    }
+
 };
 
 string print_title(int x)

@@ -41,10 +41,13 @@ int main(){
             if(res.empty())
             {
                 if(split2>>wrong_word){//só iremos sugerir no caso de busca de palavra única
-                    cout<<"Query Not Found !! Try typing a single word to get suggestions ;)"<<endl;
+                    cout<<"Query Not Found !! We can't suggest multiple queries yet;\nTry typing a single word ;)"<<endl;
                 }
                 else{
-                    GKSE.suggest(wrong_word);
+                    vector<string> suggested = GKSE.suggest(wrong_word,3,300);
+                    for(int i=0;i<suggested.size();i++){
+                        cout<<" > ["<< i+1 <<"] "<<suggested[i]<<endl;
+                    }
                 }
             
         }

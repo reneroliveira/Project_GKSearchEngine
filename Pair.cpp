@@ -10,7 +10,7 @@ public:
 
     Pair(){//construtor vazio
         core[0]=0;
-        core[1]=1;
+        core[1]=0;
     }
     Pair(int id,int freq){
         /*construtor com dois dados:
