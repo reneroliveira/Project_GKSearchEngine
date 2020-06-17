@@ -6,6 +6,10 @@
 #include <bits/stdc++.h>
 #include <vector>
 #include "teste.cpp"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
 
 using namespace std;
 using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
@@ -14,7 +18,7 @@ using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 
 
 int main(){
-   
+        
     
 //sabemos que it->second armazena nossa palavra do formulario e 
 // stream << "{\"res\":\"" <<  it->second << img_button << "\"}"; é responsavel por mostra ela
@@ -27,7 +31,9 @@ int main(){
 		auto query_fields = request->parse_query_string(); //Recebe o conteúdo de "entrada"
 		auto it = query_fields.find("text"); // Obtem o texto do conteudo
 		cout << it->second << endl;
-		
+		ifstream arquivoE;
+               string linha;
+               arquivoE.open("aTitles_0_10000.txt");
 		
 		
 		//A resposta para o servidor vai ser um JSON do formato
@@ -35,15 +41,42 @@ int main(){
 		//JSON
 		// {"atributo1":"valor1",
 		//	"atributo2": {"sub-atributo": "valor2"}} 
-		string img_button = "</br> <input id = 'btn_img' type = 'button' onclick='print_img()' value ='Me clique!'> </br>";	
+		string img_button = "</br> <input id = 'btn_img' type = 'button' onclick='print_img()' value ='Me clique!'> </br>";	        std::string resultado;
 		stringstream res;
                vector<int> rest = pesquisa(it->second); 
+               int tamanho = rest.size();
+               
+     /////////////////////////////////////          //função find + transforma em string
+                
+                int i = 0;
+                int numero = 0;
+                if(arquivoE.is_open()){
+              while(getline(arquivoE,linha)){
+                //aqui podemos fazer operaões linha a linha
+                stringstream geek(linha);
+                geek >> numero;
+                
+                for(int j  = 0;j<tamanho;j++){
+                if(rest[j] == numero){
+                resultado = linha;
+                
+                
+                }
+                }            
+               
+     
+    }
+  };
+  //////////////////////////////////////////////////////
+  //resultado =string com os titulos
+               /*std::string resultado = " ";
+               resultado = resultado +std::to_string(rest[0]); */
                 if(it->second == "sleep"){
-		res << "{\"res\":\"" << "sim" << "\"}";
+		res << "{\"res\":\"" << resultado << "\"}";
 		response->write(res);
 		}
 		
-		else{ res << "{\"res\":\"" << "as respostas nao  batem" << "\"}";
+		else{ res << "{\"res\":\"" << resultado << "\"}";
 		cout << res.str();
 		response->write(res);}
 	};

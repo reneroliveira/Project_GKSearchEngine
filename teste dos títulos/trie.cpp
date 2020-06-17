@@ -2,13 +2,14 @@
 #include <vector>
 #include <iostream>
 #include <stdio.h>
+#include <fstream>
 
 using namespace std;
 
 struct Node
 {
 
-    int aKey;// troquei a chave de char para int, pois faremos a conversão em índices primeiro;
+    //int aKey; Deixei sem a chave para tentar reduzir memória ocupada.
     Node *aChild[36];
     vector<int> docs;
     /*
@@ -18,20 +19,12 @@ struct Node
     */
 
     Node(){//
+        this->docs ={};
         for(int i=0;i<36;i++){
             this->aChild[i]=nullptr;
         }
     }
-    Node(int aIndex)
-    {
-        this->aKey = aIndex;
-        this->docs = {};
-        // Esta parte separa os caracteres. Os de 0 a 9 são os números, e os de 10 a 35 são as letras.
-        for(int i=0;i<36;i++){
-            this->aChild[i]=nullptr;
-        }
 
-    }
     void put_doc(int doc_id)
     {
         /*Função recebe um inteiro e coloca no final da vetor,
@@ -105,7 +98,7 @@ private:
         for(int i:indexes){
             if((*p)->aChild[i]==nullptr)
             {//Caso o filho i não exista, cria-se um novo Nó;
-                (*p)->aChild[i]=new Node(i);
+                (*p)->aChild[i]=new Node();
             }
 
             p=&((*p)->aChild[i]);
@@ -156,12 +149,19 @@ string print_title(int x)
     file.close();
     return title;
 }
+<<<<<<< HEAD
 
 void print_vector(vector<int> v)
 {
+=======
+void print_vector(vector<int> v,int couting)
+{   
+    int i = couting+1;
+>>>>>>> d98ec013f75e285caac031b493722b3eea951cf7
     for(int x:v)
     {
-        cout << " > " << print_title(x) << endl;
+        cout << " > ["<< i <<"] " << print_title(x) << endl;
+        i+=1;
     }
 }
 

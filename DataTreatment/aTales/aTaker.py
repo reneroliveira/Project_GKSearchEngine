@@ -14,9 +14,9 @@ if not os.path.exists("aTexts"):
 for i in range(164):
     # Desse jeito, vamos direto ao arquivo bruto original.
     aOld = "../raw.en/englishText_"+str(i*10000)+"_"+str(10000*(i+1))
-    aNew = "aTexts/aDocs_"+str(i*10000)+"_"+str(10000*(i+1))
+    aNew = "aTexts/aDocs_"+str(i*10000)+"_"+str(10000*(i+1))+".txt"
     
-    aFile = open(aOld, 'r')
+    aFile = open(aOld, 'r',encoding='iso-8859-1')
     aNotherFile = open(aNew, 'w', encoding='utf8')
     
     # Esse aBlank serve para retirar linhas vazias do texto. No sentido de que
