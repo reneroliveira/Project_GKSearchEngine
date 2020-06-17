@@ -34,11 +34,11 @@ struct Node
 };
 char index2char(int index)//converte indice para charactere alfanumérico
     {
-        if (index>=0 &&index<=9){//algarismos 0-9
-            return (char)(index+48);
+        if (index>=26 &&index<=35){//algarismos 0-9
+            return (char)(index+38);
         }
-        else if(index>=10&&index<=35){//Letras minusculas a-z
-            return (char)(index+87);
+        else if(index>=0&&index<=25){//Letras minusculas a-z
+            return (char)(index+97);
         }
     }
 vector<int> convert(string aWord)
@@ -49,19 +49,19 @@ vector<int> convert(string aWord)
         {//Função só converte corretamente, letras maiúsculas, minúsculas e números, vamos ver como tratar acentos e outros chars
             if((int)aLetter < 123 && (int)aLetter>96)
             {//Letras minúsculas
-                aKey = (int)aLetter - 87;
+                aKey = (int)aLetter - 97;
                 indexes.push_back(aKey);
                 //push_back é similar ao list.append do Python
             }
             else if ((int)aLetter < 58 && (int)aLetter>47)
             {//números de 0 a 9
-                aKey = (int)aLetter - 48;
+                aKey = (int)aLetter - 38;
                 indexes.push_back(aKey);
             }
 
             else if((int)aLetter < 91 && (int)aLetter>64)
             {//Letras maiúsculas
-                aKey = (int)aLetter - 55;
+                aKey = (int)aLetter - 65;
                 indexes.push_back(aKey);
             }
         }
@@ -118,14 +118,14 @@ public:
         return res;
     }
 
-    vector<string> suggest(string word,int maxCost,int maxlen){
+    vector<str_dt> suggest(string word,int maxCost,int maxlen){
     
-        vector<string> results;
+        vector<str_dt> results;
         int sz = word.size();
         string nodeword = "";
         vector<int> current_row(sz + 1);
         int cut=0;
-        // Naive DP initialization
+        // Inicialização da primeira linha (Programação dinâmica)
         for (int i = 0; i < sz; ++i) current_row[i] = i;
         current_row[sz] = sz;
         
@@ -170,9 +170,11 @@ private:
         }
         return (*p)->docs;
     }
-    void recurse_levenshtein(Node*& pNode, char ch, vector<int> last_row, const string& word,int maxCost,string& nodeword,vector<string>&results,int maxlen,int&cut)
+    void recurse_levenshtein(Node*& pNode, char ch, vector<int> last_row, const string& word,int maxCost,string& nodeword,vector<str_dt>&results,int maxlen,int&cut)
     {
-        
+        // Referencias: http://stevehanov.ca/blog/index.php?id=114
+        //              https://murilo.wordpress.com/2011/02/01/fast-and-easy-levenshtein-distance-using-a-trie-in-c/
+
     int sz = last_row.size();
     vector<int> current_row(sz);
     current_row[0] = last_row[0] + 1;
@@ -187,7 +189,9 @@ private:
      
     if (current_row[sz-1] <= maxCost && !(pNode->docs.empty()))
     {
-        results.push_back(nodeword);
+        int l = (pNode->docs).size();
+        str_dt s(nodeword,l);
+        results.push_back(s);
     }
     
     if (results.size()>=maxlen)
@@ -214,28 +218,7 @@ private:
                 nodeword.pop_back();
                 cut--;
                 }
-            
-            
-            
-            /*int s = nodeword.size();
-            int c=cut;
-            //cout<<cut<<" ";
-            for(int k=0;k<c;k++) {nodeword.pop_back(); cut-=1;}
-            
-            if(!(nodeword=="")){
-                cout<<"print --"<<nodeword<<endl;
-                if(nodeword.size()==1) {nodeword="";}
-
-                else{nodeword.pop_back();}
-            }*/
-            
-            //nodeword=nodeword.substr(cut2);
-            //cut=0;
-            //cut-=1;
-            //cut=s-cut;
-            //cut=nodeword.size()-cut-1;
-        }
-        
+        }        
     }
     }
 
@@ -263,16 +246,6 @@ string print_title(int x)
                     //este loop salva o título
                     title= title+words+" ";
                 }
-                /*char str[line.length()+1];
-                strcpy(str, line.c_str());
-                char *token = strtok(str, ",");
-                while (token != NULL)
-                {
-                    token = strtok(NULL, ",");
-                    if (token == NULL) break;
-                    else title = title + token + ",";
-                }
-                title.pop_back();*/
             }
             number += 1;
         }
@@ -295,7 +268,7 @@ std::string aDocs (int aIndex) // Função para procurar o texto referente ao db
     std::ifstream aFile ("aTexts/aDocs_" + std::to_string(aNumber) + "_" + std::to_string(aNumber+10000)+".txt");
     std::string aLine;
     std::string aText ("");
-    std::cout<<"aTexts/aDocs_" + std::to_string(aNumber) + "_" + std::to_string(aNumber+10000)<<endl;
+    //std::cout<<"aTexts/aDocs_" + std::to_string(aNumber) + "_" + std::to_string(aNumber+10000)<<endl;
     if (aFile.is_open())
     {
         bool aIsText (false); // Este aIsText indica se é o texto que procuramos.
