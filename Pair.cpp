@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <string>
 /*#include <algorithm>
 #include <boost/sort/spreadsort/spreadsort.hpp>*/
 
@@ -56,15 +57,22 @@ void printvp(std::vector<Pair> v){
     std::cout<<"\n";
 }
 
-/*int main()
-{   
-    std::cout<<"Hello World!\n";
-    pair P1(15,1);
-    pair P2(16,5);
-    pair P3(17,6);
-    std::vector<pair> vec={P1,P2,P3};
-    printvp(vec);
-    std::sort(vec.rbegin(),vec.rend());
-    printvp(vec);
-    return 0;
-}*/
+class str_dt{//Classe que auxilia a sugestão de palavras
+    //Armazena uma string e a quantidade de documentos
+    public:
+    std::string str; //Palavra
+    int len; //Tamaho do vetor de documentos
+    str_dt(std::string s,int l){
+        this->str=s;
+        this->len=l;   
+    }
+    bool operator<(const str_dt &s2){//Operador usado por std::sort;
+        if(len>s2.len) return true;
+        else return false;
+    }
+    void operator=(const str_dt &s2){//Operador usado por std::sort;
+        this->str=s2.str;
+        this->len=s2.len;
+    }
+    
+};

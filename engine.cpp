@@ -15,7 +15,7 @@ int main(){
         string input;
         string query;
         vector<Pair>res;
-        while(cin){//Passo um tando doloroso pra capturar mais de uma palavra.
+        while(cin){//Passo para capturar mais de uma palavra.
             cin >> input;
             query+=input;
             query+=" ";
@@ -44,15 +44,58 @@ int main(){
                     cout<<"Query Not Found !! We can't suggest multiple queries yet;\nTry typing a single word ;)"<<endl;
                 }
                 else{
-                    vector<string> suggested = GKSE.suggest(wrong_word,3,300);
-                    for(int i=0;i<suggested.size();i++){
-                        cout<<" > ["<< i+1 <<"] "<<suggested[i]<<endl;
+                    auto time1 = chrono::high_resolution_clock::now();
+                    vector<str_dt> suggested = GKSE.suggest(wrong_word,2,1000000);
+                    auto time2 = chrono::high_resolution_clock::now();
+                    chrono::duration<double, milli> t_sugg = time2 - time1;
+                    int count = 0;
+                    sort(suggested.begin(),suggested.end());
+                    cout<<" > "<<suggested.size()<<" suggestions found in "<<t_sugg.count()<< " ms."<<endl;
+                    while(1){
+                        
+                        for(int i=count;i<min(count+10,(int)suggested.size());i++){
+                            string s = (suggested[i]).str;
+                            cout<<" > ["<< i+1 <<"] "<<s<<"("<<suggested[i].len<<" results)"<<endl;
+                        }
+                        string num;
+                        cout<<"-> Do you want do search any of above? [n or the number]? ";
+                        cin>>num;
+                        if(num!="n"){
+                            try{
+                                auto time1 = chrono::high_resolution_clock::now();
+                                res=GKSE.find(suggested[stoi(num)-1].str);
+                                auto time2 = chrono::high_resolution_clock::now();
+                                chrono::duration<double, milli> t_search = time2 - time1;
+                                cout << "-> " << res.size() << " results found in " << t_search.count()/1000 << " seconds "<<"("<<t_search.count()<<" ms)." << endl;
+                                break;
+                            }
+                            catch (const std::invalid_argument &aWrong)
+                            {
+                                std::cerr << " > Ooops. It's an invalid argument.\n";
+                                std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+                                continue;
+                            }
+                            catch (const std::out_of_range &aWrong)
+                            {
+                                std::cerr << " > Ooops. This can't be converted to an integer. It's too large!\n";
+                                std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+                                continue;
+                            }
+
+                        }if (suggested.size() > count + 10) 
+                        {                               
+                            cout << "-> More suggestions [y/n]? ";
+                            cin >> num;
+                            if (num == "y") count += 10;
+                            else break;
+                        } else break;
                     }
                 }
+            }
             
-        }
         
-        else
+        
+        if(!res.empty())
         {
             
             cout << "-> Results:" << endl;
