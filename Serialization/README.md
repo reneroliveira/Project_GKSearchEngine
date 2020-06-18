@@ -18,6 +18,6 @@ Já vai preparando os 9GB de RAM meu bom...
 
 > E se a sanidade para fazer tudo isso estiver escassa, podemos baixar o arquivo da serialização da árvore original completa (a **GKSE**) por [este link](https://gvmail-my.sharepoint.com/:f:/g/personal/b39394_fgv_edu_br/EoyEu1qrbGhDgC4pBXNaiKYBdwWKkWXB5wn0wKH40ol4eg?e=hmw0xU).  
 
-É bem simples se prestar bastante atenção: construímos a árvore do modo arcaico (chamada *GKSE*), serializamos a árvore que construímos, criamos uma outra árvore (chamamos ela de **SEGK**), descerializamos o arquivo **trieSerial** na árvore **SEGK**, e pronto! Temos uma cópia perfeita da árvore original (tudo da Trie **GKSE** está em **SEGK**).  
+É bem simples se prestar bastante atenção: construímos a árvore do modo arcaico (chamada **GKSE**), serializamos a árvore que construímos, criamos uma outra árvore (chamamos ela de **SEGK**), descerializamos o arquivo **trieSerial** na árvore **SEGK**, e pronto! Temos uma cópia perfeita da árvore original (tudo da Trie **GKSE** está em **SEGK**).  
 
 > A última parte comentada de **trieSerial.cpp** era para serializar a árvore **SEGK** para comparar com a serialização da **GKSE** (o que foi válido, realmente...).  
