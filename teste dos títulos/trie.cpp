@@ -149,12 +149,19 @@ string print_title(int x)
     file.close();
     return title;
 }
+<<<<<<< HEAD
+
+void print_vector(vector<int> v)
+{
+=======
 void print_vector(vector<int> v,int couting)
 {   
     int i = couting+1;
+>>>>>>> d98ec013f75e285caac031b493722b3eea951cf7
     for(int x:v)
     {
         cout << " > ["<< i <<"] " << print_title(x) << endl;
         i+=1;
     }
 }
+
