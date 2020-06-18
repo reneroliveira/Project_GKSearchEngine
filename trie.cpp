@@ -32,41 +32,40 @@ struct Node
     }
 
 };
-char index2char(int index)//converte indice para charactere alfanumérico
-    {
-        if (index>=26 &&index<=35){//algarismos 0-9
-            return (char)(index+38);
-        }
-        else if(index>=0&&index<=25){//Letras minusculas a-z
-            return (char)(index+97);
-        }
+char index2char(int index)
+{
+    if (index>=0 &&index<=9)
+    { // Algarismos 0-9.
+        return (char)(index+48);
     }
+    // Letras minusculas a-z.
+    return (char)(index+87);
+}
 vector<int> convert(string aWord)
+{
+    vector<int> indexes;
+    int aKey;
+    for (char& aLetter:aWord)
     {
-        vector<int> indexes;
-        int aKey;
-        for (char& aLetter:aWord)
-        {//Função só converte corretamente, letras maiúsculas, minúsculas e números, vamos ver como tratar acentos e outros chars
-            if((int)aLetter < 123 && (int)aLetter>96)
-            {//Letras minúsculas
-                aKey = (int)aLetter - 97;
-                indexes.push_back(aKey);
-                //push_back é similar ao list.append do Python
-            }
-            else if ((int)aLetter < 58 && (int)aLetter>47)
-            {//números de 0 a 9
-                aKey = (int)aLetter - 38;
-                indexes.push_back(aKey);
-            }
-
-            else if((int)aLetter < 91 && (int)aLetter>64)
-            {//Letras maiúsculas
-                aKey = (int)aLetter - 65;
-                indexes.push_back(aKey);
-            }
+        if((int)aLetter < 123 && (int)aLetter>96)
+        { // Letras minúsculas.
+            aKey = (int)aLetter - 87;
+            indexes.push_back(aKey);
         }
-    return indexes;
+        else if ((int)aLetter < 58 && (int)aLetter>47)
+        { // Números de 0 a 9.
+            aKey = (int)aLetter - 48;
+            indexes.push_back(aKey);
+        }
+        else if((int)aLetter < 91 && (int)aLetter>64)
+        { // Letras maiúsculas.
+            aKey = (int)aLetter - 55;
+            indexes.push_back(aKey);
+        }
     }
+    return indexes;
+}
+
 vector<Pair> inter2sorted(vector<Pair>v1,vector<Pair>v2){
     
     int j=0;
@@ -145,8 +144,26 @@ public:
         }
         return results;
     }
- /*OBS: essas funções publicas de insert e find, pegam uma string, convertem em vetor,
- e chamam as funções privadas abaixo pra fazer o trabalho a partir desse vetor gerado*/
+  void Serialize()
+    {// Autoria da função Sertialize/Deserialize e auxiliares: Jorge Costa
+        ofstream TextSerialize ("trieSerial");
+        string Text = Serialize(aRoot);
+        cout << "Aqui foi.\n";
+        TextSerialize << Text;
+        cout << "Aqui também.\n";
+        TextSerialize.close();
+    }
+    void Deserialize()
+    {
+        Node *Current = aRoot; unsigned long int Number = 0; unsigned long int *Position = &Number;
+        ifstream TextDeserialize ("trieSerial");
+        string Rain;
+        TextDeserialize >> Rain;               // Copiamos o texto para Line.
+        string *Line = &Rain;
+
+        ShootingChars(Line, Position, Current);
+        TextDeserialize.close();
+    }
 private:
     void insert(vector<int> indexes,Node**&p){
         for(int i:indexes){
@@ -220,6 +237,94 @@ private:
                 }
         }        
     }
+    }
+    string Serialize(Node *Current) // Auxilia a Serialize().
+    {
+        string Text ("");
+        int Count = 0;
+        for (int i = 0; i < 36; i++)
+        {
+            if (Current->aChild[i] != nullptr)
+            {
+                for (int j = 0; j < Count; j++)
+                {
+                    Text += "n";
+                }
+                Count = 0;
+                Text += "+";
+                Text += Serialize(Current->aChild[i]);
+            }
+            else Count += 1;
+        }
+        if (Current->docs.empty()) Text += "/";
+        else
+        {
+            for (Pair Par : Current->docs)
+            {
+                Text += to_string(Par[0]) + ",";
+                Text += to_string(Par[1]) + ",";
+            }
+            Text.pop_back();
+            Text += "/";
+        }
+        return Text;
+    }
+    void ShootingChars(string *List, unsigned long int *&Position, Node *&Current)
+    {
+        Node *NextNode;
+        for (int Count = 0; Count < 36; Count++)
+        {
+            if ((*List)[*Position] == 'n') *Position += 1;
+            else if ((*List)[*Position] == '+')
+            {
+                Current->aChild[Count] = new Node();
+                NextNode = Current->aChild[Count];
+                *Position += 1;
+                ShootingChars(List, Position, NextNode);
+            }
+            else
+            {
+                break;
+            }
+        }
+        if ((*List)[*Position] == '/')
+        {
+            *Position += 1;
+            return;
+        }
+        string CurrentID ("");
+        int DBIndex;
+        int Frequency;
+        bool Where (false);
+        while (true)
+        {
+            if ((*List)[*Position] == ',')
+            {
+                if (Where)
+                {
+                    Frequency = stoi(CurrentID);
+                    CurrentID = "";
+                    *Position += 1;
+                    Where = false;
+                    Current->put_doc(make_pair(DBIndex, Frequency));
+                    continue;
+                }
+                DBIndex = stoi(CurrentID);
+                CurrentID = "";
+                *Position += 1;
+                Where = true;
+                continue;
+            }
+            else if ((*List)[*Position] == '/')
+            {
+                Frequency = stoi(CurrentID);
+                Current->put_doc(make_pair(DBIndex, Frequency));
+                *Position += 1;
+                break;
+            }
+            CurrentID += (*List)[*Position];
+            *Position += 1;
+        }
     }
 
 };

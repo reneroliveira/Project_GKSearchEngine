@@ -6,9 +6,14 @@
 
 using namespace std;
 int main(){
-    int num_docs=63;//Número entre 0 e 63
-    Trie GKSE=build(num_docs);
     
+    //Trie GKSE=build(63); //Essa é a construção normal que depende de sorted_words2/
+    Trie GKSE;
+    auto Start = chrono::high_resolution_clock::now();
+    GKSE.Deserialize();    //Aqui ocorre a contrução via desserialização                          
+    auto End = chrono::high_resolution_clock::now();
+    chrono::duration<double, milli> Tempo = End - Start;
+    cout << "-> Deserialization finished in " << Tempo.count()/1000 << " seconds!"<<endl;
     while(1)
     {
         cout<<"-> Type your query: ";
@@ -45,7 +50,7 @@ int main(){
                 }
                 else{
                     auto time1 = chrono::high_resolution_clock::now();
-                    vector<str_dt> suggested = GKSE.suggest(wrong_word,2,1000000);
+                    vector<str_dt> suggested = GKSE.suggest(wrong_word,2,25000);
                     auto time2 = chrono::high_resolution_clock::now();
                     chrono::duration<double, milli> t_sugg = time2 - time1;
                     int count = 0;
@@ -55,7 +60,7 @@ int main(){
                         
                         for(int i=count;i<min(count+10,(int)suggested.size());i++){
                             string s = (suggested[i]).str;
-                            cout<<" > ["<< i+1 <<"] "<<s<<"("<<suggested[i].len<<" results)"<<endl;
+                            cout<<" > ["<< i+1 <<"] "<<s<<" ("<<suggested[i].len<<" results)"<<endl;
                         }
                         string num;
                         cout<<"-> Do you want do search any of above? [n or the number]? ";

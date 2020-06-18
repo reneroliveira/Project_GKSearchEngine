@@ -21,10 +21,7 @@ public:
         core[0]=id;
         core[1]=freq;    
     }
-    Pair make_pair(int id,int freq){
-        Pair P(id,freq);
-        return P;
-    }
+    
     Pair(int data,bool index){
         core[index]=data;
         /*contrutor com apenas um dado:
@@ -48,7 +45,10 @@ public:
     }
 
 };
-
+Pair make_pair(int id,int freq){
+        Pair P(id,freq);
+        return P;
+    }
 void printvp(std::vector<Pair> v){
     std::cout<<"\n";
     for(int i=0;i<v.size();i++){
