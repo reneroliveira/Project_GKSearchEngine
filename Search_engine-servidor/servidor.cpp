@@ -31,26 +31,28 @@ int main(){
 		auto query_fields = request->parse_query_string(); //Recebe o conteúdo de "entrada"
 		auto it = query_fields.find("text"); // Obtem o texto do conteudo
 		cout << it->second << endl;
-		ifstream arquivoE;
-               string linha;
-               arquivoE.open("aTitles_0_10000.txt");
-		
-		
 		//A resposta para o servidor vai ser um JSON do formato
 		//{"res": "O seu projeto final vai ser incrível, [texto]!"}	
 		//JSON
 		// {"atributo1":"valor1",
 		//	"atributo2": {"sub-atributo": "valor2"}} 
-		string img_button = "</br> <input id = 'btn_img' type = 'button' onclick='print_img()' value ='Me clique!'> </br>";	        std::string resultado = "";
+		string img_button = "</br> <input id = 'btn_img' type = 'button' onclick='print_img()' value ='Me clique!'> </br>";	        vector<string> resultado;
 		stringstream res;
                vector<int> rest = pesquisa(it->second);
                vector<string> canvas;
+               vector<int> thor;
                int tamanho = rest.size();
-               
-     /////////////////////////////////////          //função find + transforma em string
-        /*        
-                int i = 0;
-                int numero = 0;
+               for(int i =0;i<tamanho;i++){
+               canvas.push_back(std::to_string(rest[i]));
+}                int numero = 0;
+                 int y = 0;
+                 int nabos  = 0;
+                string name = "aTitles_0_10000.txt";
+                vector<string>titulos;
+                titulos.push_back("textos.txt");
+                ifstream arquivoE;
+                string linha;
+                arquivoE.open(titulos[0]);
                 if(arquivoE.is_open()){
               while(getline(arquivoE,linha)){
                 //aqui podemos fazer operaões linha a linha
@@ -58,8 +60,12 @@ int main(){
                 geek >> numero;
                 
                 for(int j  = 0;j<tamanho;j++){
-                if(rest[j] == numero){
-                resultado = linha;
+                stringstream can(canvas[j]);
+                can >> y;
+                thor.push_back(y);
+                if(y == numero){
+                resultado.push_back(linha);
+                
                 
                 
                 }
@@ -67,22 +73,17 @@ int main(){
                
      
     }
-  }; /*
-  //////////////////////////////////////////////////////
-  //resultado =string com os titulos
-               /*std::string resultado = " ";
-               resultado = resultado +std::to_string(rest[0]); */
-               for(int i =0;i<tamanho;i++){
-               canvas.push_back(std::to_string(rest[i]));
-               
+  };           int r = resultado.size();
+               if(r == 0){
+               res << "{\"res\":\"" << "nenhum resultado encontrado" <<"\"}";
                
                }
-               
-               
-             
-		res << "{\"res\":\"" << canvas[0] << "</br>" << canvas[1] << "</br>"<< canvas[2]<<"\"}";
-		
-		response->write(res);
+               else{
+ 
+               res << "{\"res\":\"" << thor[0] << "</br>" << thor[2] << "</br>" <<thor[1] <<  "</br>" <<  thor[3]<<"\"}";
+	       response->write(res);}
+	       
+	       
 		
 	};
 	
