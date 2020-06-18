@@ -39,7 +39,7 @@ void insert_file(Trie T,const char* file)
 }
 void inicializa(Trie GKSE){
   
-   for(int i=0;i<=64;i++)
+   for(int i=0;i<=5;i++)
     {
         cout << "\r-> Inserting File " << i+1 << " of 64."; // Esse "\r" é um símbolo
         string prefix = "./sorted_words/sorted_words_";     // parecido com o "\n". Mas

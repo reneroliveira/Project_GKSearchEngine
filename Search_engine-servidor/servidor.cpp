@@ -41,13 +41,14 @@ int main(){
 		//JSON
 		// {"atributo1":"valor1",
 		//	"atributo2": {"sub-atributo": "valor2"}} 
-		string img_button = "</br> <input id = 'btn_img' type = 'button' onclick='print_img()' value ='Me clique!'> </br>";	        std::string resultado;
+		string img_button = "</br> <input id = 'btn_img' type = 'button' onclick='print_img()' value ='Me clique!'> </br>";	        std::string resultado = "";
 		stringstream res;
-               vector<int> rest = pesquisa(it->second); 
+               vector<int> rest = pesquisa(it->second);
+               vector<string> canvas;
                int tamanho = rest.size();
                
      /////////////////////////////////////          //função find + transforma em string
-                
+        /*        
                 int i = 0;
                 int numero = 0;
                 if(arquivoE.is_open()){
@@ -66,19 +67,23 @@ int main(){
                
      
     }
-  };
+  }; /*
   //////////////////////////////////////////////////////
   //resultado =string com os titulos
                /*std::string resultado = " ";
                resultado = resultado +std::to_string(rest[0]); */
-                if(it->second == "sleep"){
-		res << "{\"res\":\"" << resultado << "\"}";
-		response->write(res);
-		}
+               for(int i =0;i<tamanho;i++){
+               canvas.push_back(std::to_string(rest[i]));
+               
+               
+               }
+               
+               
+             
+		res << "{\"res\":\"" << canvas[0] << "</br>" << canvas[1] << "</br>"<< canvas[2]<<"\"}";
 		
-		else{ res << "{\"res\":\"" << resultado << "\"}";
-		cout << res.str();
-		response->write(res);}
+		response->write(res);
+		
 	};
 	
 	
