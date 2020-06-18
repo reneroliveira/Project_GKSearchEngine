@@ -67,7 +67,7 @@ vector<int> convert(string aWord)
 }
 
 vector<Pair> inter2sorted(vector<Pair>v1,vector<Pair>v2){
-    
+
     int j=0;
     int i=0;
     vector<Pair>res;
@@ -118,7 +118,7 @@ public:
     }
 
     vector<str_dt> suggest(string word,int maxCost,int maxlen){
-    
+        transform(word.begin(), word.end(), word.begin(), ::tolower);
         vector<str_dt> results;
         int sz = word.size();
         string nodeword = "";
@@ -127,7 +127,7 @@ public:
         // Inicialização da primeira linha (Programação dinâmica)
         for (int i = 0; i < sz; ++i) current_row[i] = i;
         current_row[sz] = sz;
-        
+
         for(int i = 0;i<36;i++){
             if(aRoot->aChild[i]){
                 nodeword+=index2char(i);
@@ -203,14 +203,14 @@ private:
 
         current_row[i] = min(insert_or_del, replace);
     }
-     
+
     if (current_row[sz-1] <= maxCost && !(pNode->docs.empty()))
     {
         int l = (pNode->docs).size();
         str_dt s(nodeword,l);
         results.push_back(s);
     }
-    
+
     if (results.size()>=maxlen)
     {
         return;
@@ -220,14 +220,14 @@ private:
     // sufixo cuja distancia de levenshtein seja menor
     if (*min_element(current_row.begin(), current_row.end()) <= maxCost) {
         for (int i = 0;i<36;++i) {
-            
-            
+
+
             if(pNode->aChild[i]){
                 ch=index2char(i);
                 nodeword+=ch;
                 recurse_levenshtein(pNode->aChild[i],ch, current_row, word,maxCost,nodeword,results,maxlen,cut);
                 cut+=1;
-                
+
             }
                 int s = nodeword.size();
                 int c=cut;
@@ -235,7 +235,7 @@ private:
                 nodeword.pop_back();
                 cut--;
                 }
-        }        
+        }
     }
     }
     string Serialize(Node *Current) // Auxilia a Serialize().
@@ -359,7 +359,7 @@ string print_title(int x)
     return title;
 }
 void print_vector(vector<Pair> v,int couting)
-{   
+{
     int i = couting+1;
     for(int j=0;j<v.size();j++)
     {
@@ -407,7 +407,7 @@ protected:
     const char* msg = "Ooops! Try a lower number!\n\n";
 
 public:
-    
+
     const char *what() const throw()
     {
         return msg;
@@ -421,7 +421,7 @@ string ShowText(string aInner,vector<Pair> res,int counting){
         throw OutOfRange();
     }
     return aDocs(res[aIndex-1][0]);
-          
+
 }
 
 
