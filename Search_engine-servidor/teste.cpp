@@ -45,7 +45,7 @@ void insert_file(Trie T,const char* file)
 }
 void inicializa(Trie GKSE){
   
-   for(int i=0;i<=2;i++)
+   /*for(int i=0;i<=2;i++)
     {
         cout << "\r-> Inserting File " << i+1 << " of 64."; // Esse "\r" é um símbolo
         string prefix = "./sorted_words/sorted_words_";     // parecido com o "\n". Mas
@@ -54,10 +54,10 @@ void inicializa(Trie GKSE){
         string a = prefix + number + sufix;                 // linha, meio que
         const char *arq = a.c_str();                        // reescrevendo ela.
         insert_file(GKSE,arq);
-    }
+    }*/
     //A inicialização acima se dá por insersão normal
     //Abaixo fazemos deserialização
-    //GKSE.Deserialize();
+    GKSE.Deserialize();
 
 }
 
