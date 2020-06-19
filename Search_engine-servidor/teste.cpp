@@ -45,11 +45,7 @@ void insert_file(Trie T,const char* file)
 }
 void inicializa(Trie GKSE){
   
-<<<<<<< HEAD
    for(int i=0;i<=2;i++)
-=======
-   for(int i=0;i<=12;i++)
->>>>>>> 7c3a0284017973e8dbc0a4f5b6eb6f33c41f2400
     {
         cout << "\r-> Inserting File " << i+1 << " of 64."; // Esse "\r" é um símbolo
         string prefix = "./sorted_words/sorted_words_";     // parecido com o "\n". Mas
@@ -67,7 +63,7 @@ void inicializa(Trie GKSE){
 
 vector<Pair> pesquisa(string query,Trie GKSE){
     vector<Pair> g1;
-    g1.push_back(Pair(1,-1));
+    g1.push_back(Pair(-1,-1));
     
     auto time1 = chrono::high_resolution_clock::now();
     vector<Pair> res = GKSE.find(query);

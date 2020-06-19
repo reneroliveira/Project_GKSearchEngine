@@ -1,81 +1,83 @@
 #include <string.h>
 #include <vector>
 #include <iostream>
-#include <stdio.h>
+#include <fstream>
+#include <sstream>
+#include <chrono>
+#include <algorithm>
+#include <exception>
+#include <thread>
+#include "./../Pair.cpp"
 
 using namespace std;
 
 struct Node
 {
 
-    int aKey;// troquei a chave de char para int, pois faremos a conversão em índices primeiro;
     Node *aChild[36];
-    vector<int> docs;
-    /*
-    Para checar se um nó é final de palavra, 
-    basta ver se existe algo nesse vetor usando docs.empty();
-    por isso removi o booleano end;
-    */
+    vector<Pair> docs;
+   /* agora o vetor docs é do tipo (id,freq)*/
 
-    Node(){//
+    Node(){
+        this->docs ={};
         for(int i=0;i<36;i++){
             this->aChild[i]=nullptr;
         }
     }
-    Node(int aIndex)
+
+    void put_doc(Pair P)
     {
-        this->aKey = aIndex;
-        this->docs = {};
-        // Esta parte separa os caracteres. Os de 0 a 9 são os números, e os de 10 a 35 são as letras.
-        for(int i=0;i<36;i++){
-            this->aChild[i]=nullptr;
-        }
-        
-    }
-    void put_doc(int doc_id)
-    {
-        /*Função recebe um inteiro e coloca no final da vetor,
-         de documentos do Nó cujo ponteiro p representa;*/
-        this->docs.push_back(doc_id);
+        /*Função recebe um par (id,freq) e coloca no final da vetor*/
+        this->docs.push_back(P);
     }
 
 };
+
 vector<int> convert(string aWord)
+{
+    vector<int> indexes;
+    int aKey;
+    for (char& aLetter:aWord)
     {
-        vector<int> indexes;
-        
-        // A ideia inicia é transformar a palavra numa sequência de caracteres, para depois transformá-los em índices
-        // para serem identificados nos nós.
-        //o vetor acima conterá os índices
-
-        int aKey;
-        //cout << "-> Converting word: " << aWord <<endl;
-
-        
-        // Esta parte mosta as chaves dos caracteres. Isso serve para anexá-los nos nós-filhos.
-        // (nada mais que testes maneiros)
-        for (char& aLetter:aWord)
-        {//Função só converte corretamente, letras maiúsculas, minúsculas e números, vamos ver como tratar espaço e acentos
-            if((int)aLetter < 123 && (int)aLetter>96)
-            {//Letras minúsculas
-                aKey = (int)aLetter - 87;
-                indexes.push_back(aKey);
-                //push_back é similar ao list.append do Python
-            }
-            else if ((int)aLetter < 58 && (int)aLetter>47)
-            {//números de 0 a 9
-                aKey = (int)aLetter - 48;
-                indexes.push_back(aKey);
-            }
-            
-            else if((int)aLetter < 91 && (int)aLetter>64)
-            {//Letras maiúsculas
-                aKey = (int)aLetter - 55;
-                indexes.push_back(aKey);
-            }
+        if((int)aLetter < 123 && (int)aLetter>96)
+        { // Letras minúsculas.
+            aKey = (int)aLetter - 87;
+            indexes.push_back(aKey);
         }
-    return indexes;
+        else if ((int)aLetter < 58 && (int)aLetter>47)
+        { // Números de 0 a 9.
+            aKey = (int)aLetter - 48;
+            indexes.push_back(aKey);
+        }
+        else if((int)aLetter < 91 && (int)aLetter>64)
+        { // Letras maiúsculas.
+            aKey = (int)aLetter - 55;
+            indexes.push_back(aKey);
+        }
     }
+    return indexes;
+}
+
+vector<Pair> inter2sorted(vector<Pair>v1,vector<Pair>v2){
+
+    int j=0;
+    int i=0;
+    vector<Pair>res;
+    if(v1.empty() || v2.empty()){
+        res={};
+        return res;
+    }
+    while(i < v1.size() && j<v2.size()){
+        if(v1[i][0]<v2[j][0]) i++;
+        else if(v1[i][0]>v2[j][0])j++;
+        else{
+            res.push_back(v1[i]);
+            j++;
+            i++;
+            }
+    }
+    return res;
+}
 class Trie
 {
 protected:
@@ -85,94 +87,123 @@ public:
     {
         aRoot = new Node();//  Usa-se o contrutor Node() para criar a raiz;
         cout << endl << "-> Starting trie build..." << endl;
-        
     }
 
-    ~Trie()
-    {
-        //cout  << "-> Build finished." << endl;
-    }
     Node* insert(string aWord)//retorna um ponteiro ao nó final
-    {   
+    {
         Node**p = &(aRoot);
-        //cout<<endl<<"-> Inserting: "<<aWord<<endl;
         insert(convert(aWord),p);
         return *p;
     }
-    
-    
-    vector<int> find(string aWord){
-        cout<<endl<<"-> Finding: "<<aWord<<endl;
-        return find(convert(aWord));
+
+    vector<Pair> find(string aPhrase){
+        cout << endl << "-> Finding: " << aPhrase << "..." << endl;
+        stringstream split_query;
+        split_query<<aPhrase;
+        string word;
+        split_query>>word;
+        vector<Pair> res = this->find(convert(word));
+        while(split_query>>word){
+            res=inter2sorted(res,this->find(convert(word)));
+        }
+        return res;
     }
- /*OBS: essas funções publicas de insert e find, pegam uma string, convertem em vetor,
- e chamam as funções privadas abaixo pra fazer o trabalho a partir desse vetor gerado*/
+
+    
+  
+    void Deserialize()
+    {
+        Node *Current = aRoot; unsigned long int Number = 0; unsigned long int *Position = &Number;
+        ifstream TextDeserialize ("trieSerial");
+        string Rain;
+        TextDeserialize >> Rain;               // Copiamos o texto para Line.
+        string *Line = &Rain;
+
+        ShootingChars(Line, Position, Current);
+        TextDeserialize.close();
+    }
 private:
     void insert(vector<int> indexes,Node**&p){
         for(int i:indexes){
             if((*p)->aChild[i]==nullptr)
             {//Caso o filho i não exista, cria-se um novo Nó;
-                (*p)->aChild[i]=new Node(i);
+                (*p)->aChild[i]=new Node();
             }
-            
+
             p=&((*p)->aChild[i]);
         }
     }
-    vector<int> find(vector<int> word) {
+    vector<Pair> find(vector<int> word)
+    {
         Node **p = &aRoot;
-        for(int i:word) {
+        for (int i:word)
+        {
             if (!((*p)->aChild[i])) {return {};
-            }
-            else{
+            } else {
             p = &((*p)->aChild[i]);
             }
         }
         return (*p)->docs;
+    }
+    
+    
+    void ShootingChars(string *List, unsigned long int *&Position, Node *&Current)
+    {
+        Node *NextNode;
+        for (int Count = 0; Count < 36; Count++)
+        {
+            if ((*List)[*Position] == 'n') *Position += 1;
+            else if ((*List)[*Position] == '+')
+            {
+                Current->aChild[Count] = new Node();
+                NextNode = Current->aChild[Count];
+                *Position += 1;
+                ShootingChars(List, Position, NextNode);
+            }
+            else
+            {
+                break;
+            }
         }
+        if ((*List)[*Position] == '/')
+        {
+            *Position += 1;
+            return;
+        }
+        string CurrentID ("");
+        int DBIndex;
+        int Frequency;
+        bool Where (false);
+        while (true)
+        {
+            if ((*List)[*Position] == ',')
+            {
+                if (Where)
+                {
+                    Frequency = stoi(CurrentID);
+                    CurrentID = "";
+                    *Position += 1;
+                    Where = false;
+                    Current->put_doc(make_pair(DBIndex, Frequency));
+                    continue;
+                }
+                DBIndex = stoi(CurrentID);
+                CurrentID = "";
+                *Position += 1;
+                Where = true;
+                continue;
+            }
+            else if ((*List)[*Position] == '/')
+            {
+                Frequency = stoi(CurrentID);
+                Current->put_doc(make_pair(DBIndex, Frequency));
+                *Position += 1;
+                break;
+            }
+            CurrentID += (*List)[*Position];
+            *Position += 1;
+        }
+    }
 
 };
-void print_vector(vector<int> v){
-    cout<<"-> ";
-    for(int x:v){
-    cout<<x<<" ";}
-    cout<<"\n\n";
-}
 
-// comentado temporariamente pois importaremos em outro arquivo.
-/*int main()
-{
-    cout << "-----> Wellcome to the GK'SE, the Search Engine of the Great Knights! (build mode) <-----" << endl;
-
-    cout<<"-> Trie Tests\n";
-    Trie arvore;
-    Node *p=arvore.insert("Jorge");
-    p->put_doc(7);
-    p->put_doc(47);
-    p->put_doc(78);
-    
-    
-
-    vector <int> d=arvore.find("Jorge");
-    if(d.empty()){
-        cout<<"Palavra Não Encontrada"<<endl;
-    }else{
-        cout<<"Resultados: ";
-        print_vector(d);
-    }
-
-    vector <int> d2=arvore.find("Kenner");
-    if(d2.empty()){
-        cout<<"Palavra Não Encontrada"<<endl;
-    }else{
-        cout<<"Resultados: ";
-        print_vector(d2);
-    }
-
-    return 0;
-    
-    
-    
-    
-    
-    
-}*/

@@ -37,19 +37,15 @@ int main(){
 		auto query_fields = request->parse_query_string(); //Recebe o conteúdo de "entrada"
 		auto it = query_fields.find("text"); // Obtem o texto do conteudo
 		cout << it->second << endl;
-<<<<<<< HEAD
 		
 		
     
 		
-=======
->>>>>>> 7c3a0284017973e8dbc0a4f5b6eb6f33c41f2400
 		//A resposta para o servidor vai ser um JSON do formato
 		//{"res": "O seu projeto final vai ser incrível, [texto]!"}	
 		//JSON
 		// {"atributo1":"valor1",
 		//	"atributo2": {"sub-atributo": "valor2"}} 
-<<<<<<< HEAD
 		string img_button = "</br> <input id = 'btn_img' type = 'button' onclick='print_img()' value ='Me clique!'> </br>";
 		vector<std::string> resultado;
 		stringstream res;
@@ -58,95 +54,47 @@ int main(){
                ifstream arquivoE;
                string linha;
 			   string preffix="./../aNames/";
-			  
+			  if(rest[0][0]==-1){
+            resultado.push_back("Não Encontrado");
+          }else{
      /////////////////////////////////////          //função find + transforma em string
                 for(int k = 0;k<min(20,tamanho);k++){//só pega 20 resultados
 					int number = rest[k][0] / 10000;
 					 string name = "aTitles_" + to_string(number*10000) + "_" + to_string((number+1)*10000) + ".txt";
                arquivoE.open(preffix+name);
                 int i = 0;
-                int numero = 0;
+                number = number*10000;
                 if(arquivoE.is_open()){
               while(getline(arquivoE,linha)){
 					//aqui podemos fazer operaões linha a linha
-					stringstream geek(linha);
-					geek >> numero;
-					
-					for(int j  = 0;j<tamanho;j++){
-						if(rest[j][0] == numero){
-							resultado.push_back(linha);
-						}
-					}            
+					//stringstream geek(linha);
+					if (rest[k][0]==number){
+						resultado.push_back(linha);
+					}
+					number++;            
                 }
-  			}
-				};
+  			}arquivoE.close();
+				}};
   //////////////////////////////////////////////////////
   //resultado =string com os titulos
                /*std::string resultado = " ";
                resultado = resultado +std::to_string(rest[0]); */
-                if(it->second == "sleep"){
-		res << "{\"res\":\"" << resultado[0] << "\"}";
+			   res << "{\"res\":\"";
+        if(it->second == "sleep"){
+			cout<<"sleep";
+		res << resultado[0] << "\"}";
 		response->write(res);
 		}
 		
 		else{ 
+			
 		for(int k=0;k<resultado.size();k++){
-		res << "{\"res\":\"" << resultado[k] <<"</BR>"<< "\"}";
+			res << resultado[k] <<"</BR>";
 		}
+		res<< "\"}";
 		cout << res.str();
 		response->write(res);
 		}
-=======
-		string img_button = "</br> <input id = 'btn_img' type = 'button' onclick='print_img()' value ='Me clique!'> </br>";	        vector<string> resultado;
-		stringstream res;
-               vector<int> rest = pesquisa(it->second);
-               vector<string> canvas;
-               vector<int> thor;
-               int tamanho = rest.size();
-               for(int i =0;i<tamanho;i++){
-               canvas.push_back(std::to_string(rest[i]));
-}                int numero = 0;
-                 int y = 0;
-                 int nabos  = 0;
-                string name = "aTitles_0_10000.txt";
-                vector<string>titulos;
-                titulos.push_back("textos.txt");
-                ifstream arquivoE;
-                string linha;
-                arquivoE.open(titulos[0]);
-                if(arquivoE.is_open()){
-              while(getline(arquivoE,linha)){
-                //aqui podemos fazer operaões linha a linha
-                stringstream geek(linha);
-                geek >> numero;
-                
-                for(int j  = 0;j<tamanho;j++){
-                stringstream can(canvas[j]);
-                can >> y;
-                thor.push_back(y);
-                if(y == numero){
-                resultado.push_back(linha);
-                
-                
-                
-                }
-                }            
-               
-     
-    }
-  };           int r = resultado.size();
-               if(r == 0){
-               res << "{\"res\":\"" << "nenhum resultado encontrado" <<"\"}";
-               
-               }
-               else{
- 
-               res << "{\"res\":\"" << thor[0] << "</br>" << thor[2] << "</br>" <<thor[1] <<  "</br>" <<  thor[3]<<"\"}";
-	       response->write(res);}
-	       
-	       
-		
->>>>>>> 7c3a0284017973e8dbc0a4f5b6eb6f33c41f2400
 	};
 	
 	
