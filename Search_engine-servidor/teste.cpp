@@ -22,10 +22,16 @@ void insert_file(Trie T,const char* file)
             {
                 stringstream ids;
                 ids<<linha;
-                string cur_id;
-                while(ids>>cur_id)
+                string data;//pode ser um Id ou frequencia, controlamos isso pelo bool
+                Pair P;
+                bool pos=false;
+                while(ids>>data)
                 {
-                    p->put_doc(stoi(cur_id));
+                    P.set(stoi(data),pos);
+                    if(pos){
+                        p->put_doc(P);
+                    }
+                    pos=!pos;
                 }
 
             }
@@ -39,7 +45,11 @@ void insert_file(Trie T,const char* file)
 }
 void inicializa(Trie GKSE){
   
+<<<<<<< HEAD
+   for(int i=0;i<=2;i++)
+=======
    for(int i=0;i<=12;i++)
+>>>>>>> 7c3a0284017973e8dbc0a4f5b6eb6f33c41f2400
     {
         cout << "\r-> Inserting File " << i+1 << " of 64."; // Esse "\r" é um símbolo
         string prefix = "./sorted_words/sorted_words_";     // parecido com o "\n". Mas
@@ -49,20 +59,21 @@ void inicializa(Trie GKSE){
         const char *arq = a.c_str();                        // reescrevendo ela.
         insert_file(GKSE,arq);
     }
+    //A inicialização acima se dá por insersão normal
+    //Abaixo fazemos deserialização
+    //GKSE.Deserialize();
 
 }
 
-vector<int> pesquisa(string query){
-    Trie GKSE;
-    inicializa(GKSE);
-    vector<int> g1;
-    g1.push_back(1);
+vector<Pair> pesquisa(string query,Trie GKSE){
+    vector<Pair> g1;
+    g1.push_back(Pair(1,-1));
     
     auto time1 = chrono::high_resolution_clock::now();
-    vector<int> res = GKSE.find(query);
+    vector<Pair> res = GKSE.find(query);
     auto time2 = chrono::high_resolution_clock::now();
     chrono::duration<double, milli> t_search = time2 - time1;
-
+    sort(res.begin(),res.end());//Ordenação por frequência
     cout << "-> " << res.size() << " results found in " << t_search.count()/1000 << " seconds." << endl;
 
     if(res.empty())
@@ -73,10 +84,10 @@ vector<int> pesquisa(string query){
     {
         cout << "-> Results:" << endl;
         long unsigned int counting = 0;
-        vector<int> res20;
+        vector<Pair> res20;
 
-        if (res.size() > counting + 20){res20=vector<int>(res.begin()+counting,res.begin()+counting+20);}
-        else{res20=vector<int>(res.begin()+counting,res.end());}
+        if (res.size() > counting + 20){res20=vector<Pair>(res.begin()+counting,res.begin()+counting+20);}
+        else{res20=vector<Pair>(res.begin()+counting,res.end());}
         return res20;
     }
 }
